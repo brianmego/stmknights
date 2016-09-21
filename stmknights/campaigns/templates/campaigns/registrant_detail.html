@@ -1,0 +1,8 @@
+{% extends 'campaigns/base.html' %}
+
+{% block content %}
+    <div class="registrant">
+        <h1>{{ registrant.name }}</h1>
+        <p>{{ registrant.email|linebreaksbr }}</p>
+    </div>
+{% endblock %}

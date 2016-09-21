@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>STM Knights of Columbus</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="{% static 'css/form-elements.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        <div class="page-header">
+            <a href="{% url 'registrant_new' %}" class="top-menu"><span class="glyphicon glypicon-plus"></span></a>
+            <h1><a href="/">STM Knights of Columbus</a></h1>
+        </div>
+        <div class="content container">
+            <div class="row">
+                <div class="col-md-8">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
