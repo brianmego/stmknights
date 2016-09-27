@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Campaign, Registrant
+from .models import Campaign, DegreeRegistration, Registrant
 
 
 class RegistrantAdmin(admin.ModelAdmin):
@@ -8,3 +8,4 @@ class RegistrantAdmin(admin.ModelAdmin):
 
 admin.site.register(Registrant, RegistrantAdmin)
 admin.site.register(Campaign)
+admin.site.register(DegreeRegistration)

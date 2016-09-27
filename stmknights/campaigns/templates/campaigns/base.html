@@ -1,22 +1,59 @@
 {% load staticfiles %}
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>STM Knights of Columbus</title>
+
+        <!-- Bootstrap -->
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
-        <link rel="stylesheet" href="{% static 'css/form-elements.css' %}">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+        <!-- Custom styling -->
+        <!-- <link rel="stylesheet" href="{% static 'css/form-elements.css' %}"> -->
+        <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+
     </head>
+    <!-- <body style="background-image: url({% static 'img/background.jpg' %})"> -->
     <body>
-        <div class="page-header">
-            <a href="{% url 'registrant_new' %}" class="top-menu"><span class="glyphicon glypicon-plus"></span></a>
-            <h1><a href="/">STM Knights of Columbus</a></h1>
-        </div>
-        <div class="content container">
-            <div class="row">
-                <div class="col-md-8">
-                    {% block content %}
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+        <div class="container" role="main">
+            <div class="jumbotron">
+                <img src="{% static 'img/koc_logo.png' %}">
+                <h1><a href="/">STM Knights of Columbus</a></h1>
+            </div>
+
+            <!-- <div class="page-header"> -->
+            <!--     <a href="{% url 'registrant_new' %}" class="top-menu"><span class="glyphicon glypicon-plus"></span></a> -->
+            <!--     <h1><a href="/">STM Knights of Columbus</a></h1> -->
+            <!-- </div> -->
+            <div class="top-content" >
+                <h1>{% block header_content %}Title{% endblock %}</h1>
+
+                <div class="col-md-8 text detail">
+                    <p>
+                    <strong>Host Council: </strong>St Thomas More KOFC Council #9997
+                    </p>
+                    <p>
+                    <strong>Where: </strong>St. Thomas More Catholic Church<br>10205 FM 620 N<br>Austin, TX 78726
+                    </p>
+                    <p>
+                    <strong>When: </strong>{% block when %}{% endblock %}
+                    </p>
+                    <div class="left">
+                        <p>
+                        <strong>Details: </strong>
+                        {% block details %}
+                        {% endblock %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 container">
+                    {% block container_content %}
                     {% endblock %}
                 </div>
             </div>

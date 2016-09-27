@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Campaign, Registrant
-from .forms import PostForm
+from .forms import DegreeRegistrationForm, PostForm
 
 
 def registrant_list(request):
@@ -26,3 +26,23 @@ def registrant_new(request):
     else:
         form = PostForm()
     return render(request, 'campaigns/registrant_edit.html', {'form': form})
+
+
+def degree_registration_new(request):
+    if request.method == 'POST':
+        form = DegreeRegistrationForm(request.POST)
+        if form.is_valid():
+            reg = form.save(commit=False)
+            reg.attending_council = request.POST['attending_council']
+            reg.attending_council_num = request.POST['attending_council_num']
+            reg.candidates = request.POST['candidates']
+            reg.guests = request.POST['guests']
+            reg.medallions = request.POST['medallions']
+            reg.save()
+    form = DegreeRegistrationForm()
+    substitutions = {
+        'form': form,
+        'header': 'Major Degree Registration'
+    }
+
+    return render(request, 'campaigns/registrant_edit.html', substitutions)
