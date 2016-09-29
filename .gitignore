@@ -1,4 +1,5 @@
 .env
+settings_local.py
 *.egg-info
 *.swp
 *.sqlite3
