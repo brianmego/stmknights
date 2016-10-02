@@ -133,11 +133,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-)
-
-# List of finder classes that know how to find static files in
-# various locations.
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    os.path.join(BASE_DIR, 'static', 'campaigns').replace('\\', '/'),
+    os.path.join(BASE_DIR, 'static', 'admin').replace('\\', '/'),
 )
