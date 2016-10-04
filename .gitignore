@@ -5,3 +5,4 @@ settings_local.py
 *.sqlite3
 *.pyc
 /static
+set_env_prod.sh
