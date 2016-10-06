@@ -4,7 +4,6 @@ from .models import DegreeRegistration
 
 
 def degree_thank_you(request, pk):
-
     reg = DegreeRegistration.objects.get(pk=pk)
     candidate_cost = reg.candidates * 40
     medallion_cost = reg.medallions * 8
