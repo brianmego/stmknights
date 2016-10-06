@@ -1,6 +1,10 @@
 {% extends 'campaigns/base.html' %}
 
 
+{% block header_content %}
+    {{ header }}
+{% endblock %}
+
 {% block when %}
 <div class="row">
     <div class="col-md-2">Registration:</div>
@@ -30,10 +34,6 @@
     </ul>
 {% endblock %}
 
-{% block header_content %}
-    {{ header }}
-{% endblock %}
-
 {% block container_content %}
     <form method="POST" class="registration-form">
         {% csrf_token %}
@@ -52,10 +52,34 @@
         {% endfor %}
         <div class="row">
             <div class="col-md-6">
+                <strong>Candidates</strong>
+            </div>
+            <div class="col-md-6">
+                <p id="subtotal">{{ candidates }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Guests</strong>
+            </div>
+            <div class="col-md-6">
+                <p id="subtotal">{{ guests }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Medallions</strong>
+            </div>
+            <div class="col-md-6">
+                <p id="subtotal">{{ medallions }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <strong>Subtotal</strong>
             </div>
             <div class="col-md-6">
-                <p id="subtotal">$0</p>
+                <p id="subtotal">${{ subtotal }}</p>
             </div>
         </div>
         <div class="row">
@@ -63,7 +87,7 @@
                 <strong>Admin Fee</strong>
             </div>
             <div class="col-md-6">
-                <p id="admin_fee">$0</p>
+                <p id="admin_fee">${{ admin_fee }}</p>
             </div>
         </div>
         <div class="row">
@@ -71,41 +95,8 @@
                 <strong>Grand Total</strong>
             </div>
             <div class="col-md-6">
-                <p id="grand_total">$0</p>
+                <p id="grand_total">${{ grand_total }}</p>
             </div>
         </div>
-        <div class="row">
-            <button type="submit" class="save btn btn-default">Save</button>
-        </div>
     </form>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('input').change(calculateAdminFee);
-        $('input').change(calculateSubtotal);
-        $('input').change(calculateGrandTotal);
-    });
-
-    function calculateAdminFee() {
-        var candidates = $('#id_candidates').val() * 1;
-        var guests = $('#id_guests').val() * 1;
-        var admin_fee = candidates + guests;
-        $('#admin_fee').text('$' + admin_fee);
-    }
-
-    function calculateSubtotal() {
-        var candidates_cost = $('#id_candidates').val() * 40;
-        var guests_cost = $('#id_guests').val() * 8;
-        var medallions_cost = $('#id_medallions').val() * 8;
-        var subtotal = candidates_cost + guests_cost + medallions_cost;
-        $('#subtotal').text('$' + subtotal);
-    }
-    
-    function calculateGrandTotal() {
-        var admin_fee = $('#admin_fee').text().replace('$', '') * 1;
-        var subtotal = $('#subtotal').text().replace('$', '') * 1;
-        var grand_total = admin_fee + subtotal;
-        $('#grand_total').text('$' + grand_total);
-    }
-
-    </script>
 {% endblock %}
