@@ -1,22 +1,22 @@
 from django.shortcuts import redirect, render
 from .forms import DegreeRegistrationForm
-from .models import DegreeRegistration
+from .models import DegreeRegistration, Product, Attendee, AttendeeType
 
 
 def degree_thank_you(request, pk):
     reg = DegreeRegistration.objects.get(pk=pk)
-    candidate_cost = reg.candidates * 40
+    candidate_cost = reg.attendees.all().count() * 40
     medallion_cost = reg.medallions * 8
-    guest_cost = reg.guests * 8
-    admin_fee = reg.candidates + reg.guests
+    guest_cost = reg.attendees.all().count() * 8
+    admin_fee = reg.attendees.all().count()
     subtotal = sum([candidate_cost, medallion_cost, guest_cost])
     return render(
         request,
         'campaigns/thankyou.html',
         {
             'header': 'Thank You!',
-            'candidates': reg.candidates,
-            'guests': reg.guests,
+            'candidates': reg.attendees.all().count(),
+            'guests': reg.attendees.all().count(),
             'medallions': reg.medallions,
             'subtotal': subtotal,
             'admin_fee': admin_fee,
@@ -27,19 +27,32 @@ def degree_thank_you(request, pk):
 
 def degree_registration_new(request):
     if request.method == 'POST':
-        form = DegreeRegistrationForm(request.POST)
+        post = request.POST
+        form = DegreeRegistrationForm(post)
         if form.is_valid():
             reg = form.save(commit=False)
-            reg.attending_council = request.POST['attending_council']
-            reg.attending_council_num = request.POST['attending_council_num']
-            reg.candidates = request.POST['candidates']
-            reg.guests = request.POST['guests']
-            reg.medallions = request.POST['medallions']
+            reg.attending_council = post['attending_council']
+            reg.attending_council_num = post['attending_council_num']
+            reg.medallions = post['medallions']
             reg.save()
+            attendee_types = ['Candidate', 'Guest']
+            for att_type in attendee_types:
+                for name in post.getlist(att_type.lower()):
+                    if not name:
+                        continue
+                    Attendee.objects.create(
+                        name=name,
+                        attendee_type=AttendeeType.objects.get(label=att_type),
+                        degree_registration_id=reg.pk
+                    )
             return redirect('degree_thank_you', pk=reg.pk)
     form = DegreeRegistrationForm()
+
+    products = Product.objects.all()
+    costs = {x.name: x.cost for x in products}
     substitutions = {
         'form': form,
+        'costs': costs,
         'header': 'Major Degree Registration'
     }
 

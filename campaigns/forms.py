@@ -1,5 +1,6 @@
 from django import forms
-from .models import DegreeRegistration
+from .models import Attendee, DegreeRegistration
+from django.forms.models import inlineformset_factory
 
 
 class DegreeRegistrationForm(forms.ModelForm):
@@ -8,7 +9,9 @@ class DegreeRegistrationForm(forms.ModelForm):
         fields = (
             'attending_council',
             'attending_council_num',
-            'candidates',
-            'guests',
             'medallions',
         )
+        labels = {
+            "attending_council": "Attending council name",
+            "attending_council_num": "Attending council #",
+        }
