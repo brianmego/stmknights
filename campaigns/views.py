@@ -1,26 +1,21 @@
 from django.shortcuts import redirect, render
 from .forms import DegreeRegistrationForm
-from .models import DegreeRegistration, Product, Attendee, AttendeeType
+from .models import DegreeRegistration, Product, Attendee, Campaign
 
 
 def degree_thank_you(request, pk):
     reg = DegreeRegistration.objects.get(pk=pk)
-    candidate_cost = reg.attendees.all().count() * 40
-    medallion_cost = reg.medallions * 8
-    guest_cost = reg.attendees.all().count() * 8
-    admin_fee = reg.attendees.all().count()
-    subtotal = sum([candidate_cost, medallion_cost, guest_cost])
+    candidate_count = reg.attendees.filter(attendee_type__name='Candidate').count()
+    guest_count = reg.attendees.filter(attendee_type__name='Guest').count()
     return render(
         request,
         'campaigns/thankyou.html',
         {
             'header': 'Thank You!',
-            'candidates': reg.attendees.all().count(),
-            'guests': reg.attendees.all().count(),
+            'candidates': candidate_count,
+            'guests': guest_count,
             'medallions': reg.medallions,
-            'subtotal': subtotal,
-            'admin_fee': admin_fee,
-            'grand_total': subtotal + admin_fee
+            'cost': reg.cost
         }
     )
 
@@ -34,17 +29,26 @@ def degree_registration_new(request):
             reg.attending_council = post['attending_council']
             reg.attending_council_num = post['attending_council_num']
             reg.medallions = post['medallions']
+            reg.cost = 0
             reg.save()
             attendee_types = ['Candidate', 'Guest']
+            total_cost = int(reg.medallions) * Product.objects.get(name='Medallion').cost
             for att_type in attendee_types:
                 for name in post.getlist(att_type.lower()):
                     if not name:
                         continue
-                    Attendee.objects.create(
+                    attendee = Attendee.objects.create(
                         name=name,
-                        attendee_type=AttendeeType.objects.get(label=att_type),
+                        attendee_type=Product.objects.get(
+                            name=att_type,
+                            campaign=Campaign.objects.get(name='Major Degree')
+                        ),
                         degree_registration_id=reg.pk
                     )
+                    total_cost += attendee.attendee_type.cost
+                    total_cost += 1  # Admin fee
+            reg.cost = total_cost
+            reg.save()
             return redirect('degree_thank_you', pk=reg.pk)
     form = DegreeRegistrationForm()
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Attendee, AttendeeType, Campaign, DegreeRegistration, Product
+from . import models
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -8,8 +8,17 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-admin.site.register(DegreeRegistration)
-admin.site.register(Campaign)
-admin.site.register(Attendee)
-admin.site.register(AttendeeType)
-admin.site.register(Product, ProductAdmin)
+class AttendeeInline(admin.TabularInline):
+    model = models.Attendee
+
+
+class DegreeRegistrationAdmin(admin.ModelAdmin):
+    inlines = [
+        AttendeeInline
+    ]
+
+admin.site.register(models.DegreeRegistration, DegreeRegistrationAdmin)
+admin.site.register(models.Campaign)
+admin.site.register(models.Attendee)
+admin.site.register(models.Contact)
+admin.site.register(models.Product, ProductAdmin)

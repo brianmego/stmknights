@@ -1,26 +1,28 @@
 from django.db import models
 
 
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+
 class DegreeRegistration(models.Model):
     attending_council = models.CharField(max_length=100)
     attending_council_num = models.PositiveIntegerField()
     medallions = models.PositiveIntegerField()
+    cost = models.PositiveIntegerField()
 
     def __str__(self):
         return self.attending_council
 
 
-class AttendeeType(models.Model):
-    label = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.label
-
-
 class Attendee(models.Model):
     name = models.CharField(max_length=100, blank=False)
     attendee_type = models.ForeignKey(
-        'AttendeeType',
+        'Product',
         on_delete=models.CASCADE
     )
     degree_registration = models.ForeignKey(
@@ -35,6 +37,7 @@ class Attendee(models.Model):
 
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
+    contact = models.ManyToManyField(Contact)
 
     def __str__(self):
         return self.name

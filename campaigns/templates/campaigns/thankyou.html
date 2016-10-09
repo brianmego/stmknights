@@ -24,79 +24,53 @@
 {% endblock %}
 
 {% block details %}
-    <ul type='disc'>
-        <li>Candidate: $40</li>
-        <li>Guest: $8 for lunch</li>
-        <li>Additional Medallions: $8</li>
-        <li>No cost for guests not eating lunch</li>
-        <li>Family members can attend mass and lunch (only included in guest cost if eating lunch)</li>
-        <li>Medallion cost is ONLY if needed, medallion already included in candidate cost</li>
-    </ul>
+    Your registration has been recorded.
 {% endblock %}
 
 {% block container_content %}
-    <form method="POST" class="registration-form">
-        {% csrf_token %}
-        {% for entry in form %}
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>
-                        {{ entry.label }}
-                    </strong>
-                </div>
-                <div class="col-md-6">
-                    {{ entry }}
-                </div>
-            </div>
-            <br>
-        {% endfor %}
+    {% for entry in form %}
         <div class="row">
             <div class="col-md-6">
-                <strong>Candidates</strong>
+                <strong>
+                    {{ entry.label }}
+                </strong>
             </div>
             <div class="col-md-6">
-                <p id="subtotal">{{ candidates }}</p>
+                {{ entry }}
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Guests</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="subtotal">{{ guests }}</p>
-            </div>
+        <br>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Candidates</strong>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Medallions</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="subtotal">{{ medallions }}</p>
-            </div>
+        <div class="col-md-6">
+            <p id="subtotal">{{ candidates }}</p>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Subtotal</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="subtotal">${{ subtotal }}</p>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Guests</strong>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Admin Fee</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="admin_fee">${{ admin_fee }}</p>
-            </div>
+        <div class="col-md-6">
+            <p id="subtotal">{{ guests }}</p>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Grand Total</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="grand_total">${{ grand_total }}</p>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Medallions</strong>
         </div>
-    </form>
+        <div class="col-md-6">
+            <p id="subtotal">{{ medallions }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Grand Total</strong>
+        </div>
+        <div class="col-md-6">
+            <p id="grand_total">${{ cost }}</p>
+        </div>
+    </div>
 {% endblock %}
