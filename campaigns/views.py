@@ -61,3 +61,15 @@ def degree_registration_new(request):
     }
 
     return render(request, 'campaigns/registrant_edit.html', substitutions)
+
+
+def nuts_order(request):
+    # if request.method == 'POST':
+    #     return redirect('degree_thank_you', pk=reg.pk)
+    products = Product.objects.filter(campaign__name='Nut Sales')
+    substitutions = {
+        'products': products,
+        'header': 'Nuts Orders'
+    }
+
+    return render(request, 'campaigns/nuts_order.html', substitutions)

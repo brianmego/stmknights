@@ -1,0 +1,67 @@
+{% extends 'campaigns/sales.html' %}
+
+
+{% block container_content %}
+    <form method="POST" class="sales-form">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <strong>Product</strong>
+            </div>
+            <div class="col-md-2">
+                <strong>Weight</strong>
+            </div>
+            <div class="col-md-2">
+                <strong>Add to Cart</strong>
+            </div>
+            <div class="col-md-1">
+                <strong>Cost</strong>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        <br>
+        {% for product in products %}
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>
+                        {{ product.name }}
+                    </strong>
+                </div>
+                <div class="col-md-2">
+                    {{ product.meta_field_one }}
+                </div>
+                <div class="col-md-2">
+                    <input id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number">
+                </div>
+                <div class="col-md-1">
+                    ${{ product.cost }}
+                </div>
+                <div class="col-md-4">
+                    <img src=/static/campaigns/img/nuts/{{ product.meta_field_two }} width=50%>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Subtotal</strong>
+            </div>
+            <div class="col-md-6">
+                <p id="subtotal">$0</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Grand Total</strong>
+            </div>
+            <div class="col-md-6">
+                <p id="grand_total">$0</p>
+            </div>
+        </div>
+        <div class="row">
+            <button type="submit" class="save btn btn-default">Submit</button>
+        </div>
+    </form>
+{% endblock %}

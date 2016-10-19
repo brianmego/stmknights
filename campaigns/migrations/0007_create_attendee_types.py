@@ -3,16 +3,10 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from .. import models
 
 
 def forwards(apps, schema_editor):
-    models.AttendeeType.objects.create(
-        label='Guest',
-    )
-    models.AttendeeType.objects.create(
-        label='Candidate',
-    )
+    pass
 
 
 def backwards(apps, schema_editor):

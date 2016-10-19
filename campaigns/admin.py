@@ -3,7 +3,7 @@ from . import models
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'campaign', 'cost')
+    list_display = ('name', 'campaign', 'cost', 'meta_field_one', 'meta_field_two')
     list_filter = ('campaign',)
     search_fields = ('name',)
 

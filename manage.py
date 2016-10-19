@@ -2,6 +2,11 @@
 import os
 import sys
 
+try:
+    import colored_traceback.auto
+except ImportError:
+    pass
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "stmknights.settings")
     try:

@@ -1,0 +1,31 @@
+{% extends 'campaigns/base.html' %}
+
+{% block header_content %}
+    {{ header }}
+{% endblock %}
+
+{% block body %}
+<div class="col-md-8 text detail">
+    <p>
+    <strong>Host Council: </strong>St Thomas More KOFC Council #9997
+    </p>
+    <p>
+    <strong>Where: </strong>St. Thomas More Catholic Church<br>10205 FM 620 N<br>Austin, TX 78726
+    </p>
+    <p>
+    <strong>When: </strong>{% block when %}{% endblock %}
+    </p>
+    <div class="left">
+        <p>
+        <strong>Details: </strong>
+        {% block details %}
+        {% endblock %}
+        </p>
+    </div>
+</div>
+
+<div class="col-md-4 container">
+    {% block container_content %}
+    {% endblock %}
+</div>
+{% endblock %}

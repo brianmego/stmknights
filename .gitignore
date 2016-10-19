@@ -6,3 +6,4 @@ settings_local.py
 *.pyc
 /static
 set_env_prod.sh
+tags
