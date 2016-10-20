@@ -32,9 +32,9 @@
                     {{ product.meta_field_one }}
                 </div>
                 <div class="col-md-2">
-                    <input id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number">
+                    <input class='product-input' id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number">
                 </div>
-                <div class="col-md-1">
+                <div id="product-{{ product.id }}-cost" class="col-md-1">
                     ${{ product.cost }}
                 </div>
                 <div class="col-md-4">
@@ -46,22 +46,44 @@
 
         <div class="row">
             <div class="col-md-6">
-                <strong>Subtotal</strong>
+                <strong>Total</strong>
             </div>
             <div class="col-md-6">
-                <p id="subtotal">$0</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Grand Total</strong>
-            </div>
-            <div class="col-md-6">
-                <p id="grand_total">$0</p>
+                <p id="total">$0</p>
             </div>
         </div>
         <div class="row">
             <button type="submit" class="save btn btn-default">Submit</button>
         </div>
     </form>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        set_input_events()
+    });
+
+
+    function set_input_events() {
+        $('input').blur(calculateTotal);
+    }
+
+    function calculateTotal() {
+        var total = 0
+        $('.product-input')
+        .each( 
+            function() {
+                total += (
+                    $('#' + $(this).attr('id') + '-cost')
+                        .text()
+                        .trim()
+                        .substr(1)
+                    ) *
+                    $(this).val()
+            }
+        );
+        $('#total').text('$' + total);
+    }
+
+    </script>
+
 {% endblock %}
