@@ -27,6 +27,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('cost', models.DecimalField(decimal_places=2, max_digits=6)),
                 ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='campaigns.Campaign')),
+                ('meta_field_one', models.CharField(max_length=100, null=True)),
+                ('meta_field_two', models.CharField(max_length=100, null=True)),
             ],
         ),
     ]

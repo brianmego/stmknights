@@ -2,7 +2,7 @@
 
 
 {% block container_content %}
-    <form method="POST" class="sales-form">
+    <form method="POST" action="/payment/" class="sales-form">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-3">

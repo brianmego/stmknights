@@ -1,6 +1,5 @@
 from django import forms
-from .models import Attendee, DegreeRegistration
-from django.forms.models import inlineformset_factory
+from .models import DegreeRegistration
 
 
 class DegreeRegistrationForm(forms.ModelForm):

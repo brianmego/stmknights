@@ -1,6 +1,16 @@
+from django.conf import settings
 from django.shortcuts import redirect, render
+import braintree
 from .forms import DegreeRegistrationForm
 from .models import DegreeRegistration, Product, Attendee, Campaign
+
+
+braintree.Configuration.configure(
+    braintree.Environment.Sandbox,
+    merchant_id=settings.BRAINTREE_MERCHANT_ID,
+    public_key=settings.BRAINTREE_PUBLIC_KEY,
+    private_key=settings.BRAINTREE_PRIVATE_KEY
+)
 
 
 def degree_thank_you(request, pk):
@@ -64,12 +74,44 @@ def degree_registration_new(request):
 
 
 def nuts_order(request):
-    # if request.method == 'POST':
-    #     return redirect('degree_thank_you', pk=reg.pk)
     products = Product.objects.filter(campaign__name='Nut Sales')
     substitutions = {
         'products': products,
         'header': 'Nuts Orders'
     }
-
     return render(request, 'campaigns/nuts_order.html', substitutions)
+
+
+def payment_confirmation_view(request):
+    if request.method == 'POST':
+        result = braintree.Transaction.sale(
+            {
+                "amount": request.POST['payment-amount'],
+                "payment_method_nonce": request.POST['payment-method-nonce'],
+                "options": {
+                    "submit_for_settlement": True
+                }
+            }
+        )
+        substitutions = {
+            'result': result
+        }
+        return render(request, 'campaigns/sales_thankyou.html', substitutions)
+
+
+def payment_view(request):
+    if request.method == 'POST':
+        product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
+        products = []
+        for key, value in product_inputs.items():
+            if not value:
+                continue
+            pk = key.split('product-')[1]
+            products.append((Product.objects.get(pk=pk), value))
+        total = sum([x[0].cost * int(x[1]) for x in products])
+        substitutions = {
+            'products': products,
+            'grand_total': total,
+            'nonce': braintree.ClientToken.generate()
+        }
+        return render(request, 'campaigns/payment.html', substitutions)
