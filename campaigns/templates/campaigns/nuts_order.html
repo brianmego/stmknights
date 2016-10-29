@@ -2,20 +2,20 @@
 
 
 {% block container_content %}
-    <form method="POST" action="/payment/" class="sales-form">
+    <form method="POST" action="/checkout/" class="sales-form">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-3">
-                <strong>Product</strong>
+                <h3><strong>Product</strong></h3>
             </div>
             <div class="col-md-2">
-                <strong>Weight</strong>
+                <h3><strong>Weight</strong></h3>
             </div>
             <div class="col-md-2">
-                <strong>Add to Cart</strong>
+                <h3><strong>Add to Cart</strong></h3>
             </div>
             <div class="col-md-1">
-                <strong>Cost</strong>
+                <h3><strong>Cost</strong></h3>
             </div>
             <div class="col-md-4">
             </div>
@@ -51,9 +51,9 @@
             <div class="col-md-6">
                 <p id="total">$0</p>
             </div>
-        </div>
         <div class="row">
-            <button type="submit" class="save btn btn-default">Submit</button>
+            <button type="submit" class="save btn btn-default center">Submit</button>
+        </div>
         </div>
     </form>
 

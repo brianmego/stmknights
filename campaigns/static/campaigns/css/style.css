@@ -76,6 +76,20 @@ img { max-width: 100%; }
 .btn-link-2:hover, .btn-link-2:focus, 
 .btn-link-2:active, .btn-link-2:active:focus { outline: 0; opacity: 0.6; background: rgba(0, 0, 0, 0.3); color: #fff; }
 
+/***** Jumbotron *****/
+
+.jumbotron {
+    padding: 0.2em 0.3em;
+}
+.jumbotron h1 {
+     font-size: 3em;
+ }
+.jumbotron p {
+     font-size: 1.2em;
+     .btn {
+         padding: 0.5em;
+     }
+ }
 
 /***** Top content *****/
 
@@ -195,10 +209,7 @@ footer .footer-border {
 
 footer p { opacity: 0.8; }
 
-footer a {
-	color: #fff;
-}
-footer a:hover, footer a:focus { color: #fff; border-bottom: 1px dotted #fff; }
+footer a:hover, footer a:focus { border-bottom: 1px dotted; }
 
 
 /***** Media queries *****/

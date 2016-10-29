@@ -42,9 +42,15 @@
         <div class="row">
             <div>
                 <input type="hidden" name="payment-method-nonce">
+                <input type="hidden" name="payment-amount">
                 <input type="submit" value="Pay ${{grand_total}}" disabled>
             </div>
         </div>
+
+    <div>
+        <a href='/nuts/order'>Change order</a>
+    </div>
+
     </form>
 
     <!-- Load the Client component. -->
@@ -54,12 +60,8 @@
     <script src="https://js.braintreegateway.com/web/3.5.0/js/hosted-fields.min.js"></script>
 
     <script>
-    // We generated a client token for you so you can test out this code
-    // immediately. In a production-ready integration, you will need to
-    // generate a client token on your server (see section below).
     var submit = document.querySelector('input[type="submit"]');
     var form = document.querySelector('#checkout-form');
-    var submit = document.querySelector('input[type="submit"]');
 
     braintree.client.create({
       // Replace this with your own authorization.
@@ -114,10 +116,12 @@
               return;
             }
 
+            submit.setAttribute('disabled', true);
             // Put `payload.nonce` into the `payment-method-nonce` input, and then
             // submit the form. Alternatively, you could send the nonce to your server
             // with AJAX.
             document.querySelector('input[name="payment-method-nonce"]').value = payload.nonce;
+            document.querySelector('input[name="payment-amount"]').value = {{ grand_total }};
             form.submit();
           });
         }, false);

@@ -77,7 +77,7 @@ def nuts_order(request):
     products = Product.objects.filter(campaign__name='Nut Sales')
     substitutions = {
         'products': products,
-        'header': 'Nuts Orders'
+        'header': 'Nuts Order Form'
     }
     return render(request, 'campaigns/nuts_order.html', substitutions)
 
@@ -99,7 +99,7 @@ def payment_confirmation_view(request):
         return render(request, 'campaigns/sales_thankyou.html', substitutions)
 
 
-def payment_view(request):
+def checkout_view(request):
     if request.method == 'POST':
         product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
         products = []
@@ -110,8 +110,9 @@ def payment_view(request):
             products.append((Product.objects.get(pk=pk), value))
         total = sum([x[0].cost * int(x[1]) for x in products])
         substitutions = {
+            'header': 'Checkout',
             'products': products,
             'grand_total': total,
             'nonce': braintree.ClientToken.generate()
         }
-        return render(request, 'campaigns/payment.html', substitutions)
+        return render(request, 'campaigns/checkout.html', substitutions)

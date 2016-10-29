@@ -12,7 +12,7 @@
 
         <!-- Custom styling -->
         <!-- <link rel="stylesheet" href="{% static 'css/form-elements.css' %}"> -->
-        <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+        <link rel="stylesheet" href="{% static 'campaigns/css/style.css' %}">
 
     </head>
     <!-- <body style="background-image: url({% static 'img/background.jpg' %})"> -->
@@ -24,14 +24,22 @@
             <div class="jumbotron">
                 <img src="{% static 'campaigns/img/koc_logo.png' %}">
                 <h1><a href="/">STM Knights of Columbus</a></h1>
+                <p>St. Thomas More Catholic Church<br>10205 FM 620 N<br>Austin, TX 78726</p>
+
             </div>
 
-            <div class="top-content" >
+            <div class="page-header">
                 <h1>{% block header_content %}Title{% endblock %}</h1>
-
-                {% block body %}
-                {% endblock %}
             </div>
+
+            {% block body %}{% endblock %}
         </div>
+
+        <br>
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted text-center"><a href='http://stmknights.org' target="_blank">About STM Knights</a></p>
+            </div>
+        </footer>
     </body>
 </html>
