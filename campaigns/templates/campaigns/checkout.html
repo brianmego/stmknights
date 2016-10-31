@@ -4,7 +4,7 @@
 
     <form id="checkout-form" action="/payment_confirmation/" method="post">
         {% csrf_token %}
-        <div id="error-message"></div>
+        <div class='error' id="error-message"></div>
 
         {% for product in products %}
             <div class="row">
@@ -19,39 +19,48 @@
                     </strong>
                 </div>
             </div>
+            <input type='hidden' name="product" value="{{ product.0.name }} - {{ product.1 }}" />
             <br>
         {% endfor %}
 
-        <div class="row">
-            <div class="col-md-4">
-                <label for="card-number">Card Number</label>
-                <div class="hosted-field" id="card-number"></div>
-            </div>
-
-            <div class="col-md-4">
-                <label for="cvv">CVV</label>
-                <div class="hosted-field" id="cvv"></div>
-            </div>
-
-            <div class="col-md-4">
-                <label for="expiration-date">Expiration Date</label>
-                <div class="hosted-field" id="expiration-date"></div>
-            </div>
-
+        <div='col-md-12'>
+            <label class='col-md-6' for="first-name">Cardholder First Name</label>
+            <input type='text' class='col-md-6' id="first-name" name="first-name" placeholder='John'/>
         </div>
-        <div class="row">
-            <div>
-                <input type="hidden" name="payment-method-nonce">
-                <input type="hidden" name="payment-amount">
-                <input type="submit" value="Pay ${{grand_total}}" disabled>
-            </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="last-name">Cardholder Last Name</label>
+            <input type='text' class='col-md-6' id="last-name" name="last-name" placeholder='Smith'/>
         </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="address">Street Address</label>
+            <input type='text' class='col-md-6' id="street-address" name="street-address" placeholder='123 Main St'/>
+        </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="address">Postal Code</label>
+            <input type='text' class='col-md-6' id="postal-code" name="postal-code" placeholder='78726'/>
+        </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="card-number">Card Number</label>
+            <div class="col-md-6 hosted-field" id="card-number"></div>
+        </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="cvv">CVV</label>
+            <div class="col-md-6 hosted-field" id="cvv"></div>
+        </div>
+        <div='col-md-12'>
+            <label class='col-md-6' for="expiration-date">Expiration Date</label>
+            <div class="col-md-6 hosted-field" id="expiration-date"></div>
+        </div>
+        <input type="hidden" name="payment-method-nonce">
+        <input type="hidden" name="payment-amount">
+        <input type="submit" value="Pay ${{grand_total}}" disabled>
+
+    </form>
 
     <div>
         <a href='/nuts/order'>Change order</a>
     </div>
 
-    </form>
 
     <!-- Load the Client component. -->
     <script src="https://js.braintreegateway.com/web/3.5.0/js/client.min.js"></script>
@@ -112,7 +121,7 @@
 
           hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
             if (tokenizeErr) {
-              // Handle error in Hosted Fields tokenization
+              $('#error-message').text(tokenizeErr.message);
               return;
             }
 
@@ -129,7 +138,7 @@
     });
 
     $('.hosted-field').height('50')
-    
+
     </script>
 
 {% endblock %}

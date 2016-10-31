@@ -35,6 +35,10 @@ img { max-width: 100%; }
 ::selection { background: #19b9e7; color: #fff; text-shadow: none; }
 
 
+.error {
+    color: red
+}
+
 .btn-link-1 {
 	display: inline-block;
 	height: 50px;
