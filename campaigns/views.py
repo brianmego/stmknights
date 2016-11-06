@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 import braintree
 from .forms import DegreeRegistrationForm
-from .models import DegreeRegistration, Product, Attendee, Campaign
+from .models import Attendee, Campaign, DegreeRegistration, LineItem, Order, Product
 
 
 braintree.Configuration.configure(
@@ -74,10 +74,28 @@ def degree_registration_new(request):
     return render(request, 'campaigns/registrant_edit.html', substitutions)
 
 
-def nuts_order(request):
+def nuts_order(request, pk=None):
     products = Product.objects.filter(campaign__name='Nut Sales')
+
+    cart = {}
+    for product in products:
+        cart[product.pk] = {
+            'id': product.pk,
+            'name': product.name,
+            'weight': product.meta_field_one,
+            'quantity': 0,
+            'cost': product.cost,
+            'image': product.meta_field_two
+        }
+
+    if pk:
+        order = Order.objects.get(pk=pk)
+        for line_item in order.lineitem_set.all():
+            cart[line_item.product.pk]['quantity'] = line_item.quantity
+
     substitutions = {
-        'products': products,
+        'order': pk,
+        'products': cart.values(),
         'header': 'Nuts Order Form'
     }
     return render(request, 'campaigns/nuts_order.html', substitutions)
@@ -103,6 +121,10 @@ def payment_confirmation_view(request):
         substitutions = {
             'result': result
         }
+
+        order = Order.objects.get(pk=request.POST['order_id'])
+        order.braintree_id = result.transaction.id
+        order.save()
 
         if not result.is_success:
             raise Exception('Error with braintree payment')
@@ -132,17 +154,28 @@ def payment_confirmation_view(request):
 def checkout_view(request):
     if request.method == 'POST':
         product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
-        products = []
+        existing_order_id = request.POST['order_id']
+        if existing_order_id != 'None':
+            order = Order.objects.get(pk=existing_order_id)
+            order.lineitem_set.all().delete()
+        else:
+            order = Order.objects.create()
+
         for key, value in product_inputs.items():
             if not value:
                 continue
             pk = key.split('product-')[1]
-            products.append((Product.objects.get(pk=pk), value))
-        total = sum([x[0].cost * int(x[1]) for x in products])
+            product = Product.objects.get(pk=pk)
+            LineItem.objects.create(
+                product=product,
+                order=order,
+                quantity=value,
+                price_snapshot=product.cost
+            )
+
         substitutions = {
             'header': 'Checkout',
-            'products': products,
-            'grand_total': total,
+            'order': order,
             'nonce': braintree.ClientToken.generate()
         }
         return render(request, 'campaigns/checkout.html', substitutions)

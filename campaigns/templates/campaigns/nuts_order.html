@@ -29,16 +29,16 @@
                     </strong>
                 </div>
                 <div class="col-md-2">
-                    {{ product.meta_field_one }}
+                    {{ product.weight }}
                 </div>
                 <div class="col-md-2">
-                    <input class='product-input' id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number">
+                    <input class='product-input' id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number" value="{{ product.quantity }}">
                 </div>
                 <div id="product-{{ product.id }}-cost" class="col-md-1">
                     ${{ product.cost }}
                 </div>
                 <div class="col-md-4">
-                    <img src=/static/campaigns/img/nuts/{{ product.meta_field_two }} width=50%>
+                    <img src=/static/campaigns/img/nuts/{{ product.image }} width=50%>
                 </div>
             </div>
             <br>
@@ -55,11 +55,13 @@
             <button type="submit" class="save btn btn-default center">Submit</button>
         </div>
         </div>
+        <input type='hidden' name="order_id" value="{{ order }}" />
     </form>
 
     <script type="text/javascript">
     $(document).ready(function() {
-        set_input_events()
+        set_input_events();
+        calculateTotal();
     });
 
 

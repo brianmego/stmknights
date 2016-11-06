@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 
@@ -55,3 +56,37 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class LineItem(models.Model):
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.PROTECT
+    )
+    order = models.ForeignKey(
+        'Order',
+        on_delete=models.PROTECT
+    )
+    price_snapshot = models.DecimalField(max_digits=6, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return '{} - {} - {}'.format(
+            self.product.name,
+            self.quantity,
+            self.order.modified_time
+        )
+
+
+class Order(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_time = models.DateTimeField(auto_now_add=True)
+    modified_time = models.DateTimeField(auto_now=True)
+    braintree_id = models.CharField(max_length=25, null=True, blank=True)
+    voided = models.BooleanField(default=False)
+
+    def get_total(self):
+        return sum([x.price_snapshot * x.quantity for x in self.lineitem_set.all()])
+
+    class Meta:
+        ordering = ['-modified_time']
