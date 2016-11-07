@@ -127,14 +127,16 @@ def payment_confirmation_view(request):
         order.save()
 
         if not result.is_success:
-            raise Exception('Error with braintree payment')
+            raise Exception(result.message)
 
+        order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
         email_body = [
-            'name: {}'.format(request.POST['first-name']),
+            'name: {} {}'.format(request.POST['first-name'], request.POST['last-name']),
             'address: {}'.format(request.POST['street-address']),
             'postal_code: {}'.format(request.POST['postal-code']),
+            'phone: {}'.format(request.POST['phone-number']),
             'amount: ${}'.format(request.POST['payment-amount']),
-            'order: {}'.format(request.POST.getlist('product'))
+            'order: {}'.format(order_list)
         ]
 
         campaign = Campaign.objects.get(name='Nut Sales')
