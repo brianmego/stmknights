@@ -7,7 +7,7 @@ from .models import Attendee, Campaign, DegreeRegistration, LineItem, Order, Pro
 
 
 braintree.Configuration.configure(
-    braintree.Environment.Sandbox,
+    braintree.Environment.All[settings.BRAINTREE_ENVIRONMENT],
     merchant_id=settings.BRAINTREE_MERCHANT_ID,
     public_key=settings.BRAINTREE_PUBLIC_KEY,
     private_key=settings.BRAINTREE_PRIVATE_KEY
