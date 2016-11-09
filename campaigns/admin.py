@@ -12,8 +12,17 @@ class AttendeeInline(admin.TabularInline):
     model = models.Attendee
 
 
+class LineItemInline(admin.TabularInline):
+    model = models.LineItem
+    readonly_fields = ('product', 'price_snapshot', 'quantity')
+    can_delete = False
+
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'modified_time', 'total', 'braintree_id', 'voided')
+    inlines = [
+        LineItemInline
+    ]
 
     def total(self, obj):
         return obj.get_total()
