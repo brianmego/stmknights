@@ -106,6 +106,12 @@ def payment_confirmation_view(request):
         result = braintree.Transaction.sale(
             {
                 "amount": request.POST['payment-amount'],
+                "customer": {
+                    "first_name": request.POST['first-name'],
+                    "last_name": request.POST['last-name'],
+                    "phone": request.POST['phone-number'],
+                    "email": request.POST['email']
+                },
                 "billing": {
                     "first_name": request.POST['first-name'],
                     "last_name": request.POST['last-name'],
@@ -140,13 +146,14 @@ def payment_confirmation_view(request):
         ]
 
         campaign = Campaign.objects.get(name='Nut Sales')
-        email_addrs = campaign.contact.all().values_list('email', flat=True)
+        email_addrs = list(campaign.contact.all().values_list('email', flat=True))
+        email_addrs.append(request.POST['email'])
 
         msg = EmailMultiAlternatives(
-                'There has been a sale of nuts!',
+                'STM Knights Nut Sales Order Confirmation',
                 ''.join(email_body),
                 'NutSales@STMKnights.org',
-                email_addrs,
+                set(email_addrs),
         )
         msg.attach_alternative('<br>'.join(email_body), "text/html")
         msg.send()
