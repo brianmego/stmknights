@@ -9,3 +9,4 @@ set_env_prod.sh
 tags
 set_env_local_secret.sh
 todo.txt
+.idea

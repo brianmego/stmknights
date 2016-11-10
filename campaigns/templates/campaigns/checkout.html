@@ -4,7 +4,7 @@
 
     <form id="checkout-form" action="/payment_confirmation/" method="post">
         {% csrf_token %}
-        <div class='error' id="error-message"></div>
+        <div class='error' id="error-message">{{ error_message }}</div>
         <div class='col-md-12'>
 
             {% for lineitem in order.lineitem_set.all %}

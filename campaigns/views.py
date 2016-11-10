@@ -103,6 +103,9 @@ def nuts_order(request, pk=None):
 
 def payment_confirmation_view(request):
     if request.method == 'POST':
+        nonce = request.POST['payment-method-nonce']
+        order = Order.objects.get(pk=request.POST['order_id'])
+
         result = braintree.Transaction.sale(
             {
                 "amount": request.POST['payment-amount'],
@@ -118,7 +121,7 @@ def payment_confirmation_view(request):
                     "street_address": request.POST['street-address'],
                     "postal_code": request.POST['postal-code'],
                 },
-                "payment_method_nonce": request.POST['payment-method-nonce'],
+                "payment_method_nonce": nonce,
                 "options": {
                     "submit_for_settlement": True
                 }
@@ -128,12 +131,17 @@ def payment_confirmation_view(request):
             'result': result
         }
 
-        order = Order.objects.get(pk=request.POST['order_id'])
+        if not result.is_success:
+            substitutions = {
+                'header': 'Checkout',
+                'order': order,
+                'nonce': braintree.ClientToken.generate(),
+                'error_message': result.message
+            }
+            return render(request, 'campaigns/checkout.html', substitutions)
+
         order.braintree_id = result.transaction.id
         order.save()
-
-        if not result.is_success:
-            raise Exception(result.message)
 
         order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
         email_body = [
