@@ -101,6 +101,35 @@ def nuts_order(request, pk=None):
     return render(request, 'campaigns/nuts_order.html', substitutions)
 
 
+def fishfry_order(request, pk=None):
+    products = Product.objects.filter(campaign__name='Lenten Fish Fry')
+
+    cart = {}
+    for product in products:
+        cart[product.pk] = {
+            'id': product.pk,
+            'name': product.name,
+            'weight': product.meta_field_one,
+            'quantity': 0,
+            'cost': product.cost,
+            'image': product.meta_field_two
+        }
+
+    if pk:
+        order = Order.objects.get(pk=pk)
+        for line_item in order.lineitem_set.all():
+            cart[line_item.product.pk]['quantity'] = line_item.quantity
+
+    substitutions = {
+        'order': pk,
+        'products': cart.values(),
+        'header': 'Fish Fry Order Form'
+    }
+    return render(request, 'campaigns/fishfry_order.html', substitutions)
+
+
+
+
 def payment_confirmation_view(request):
     if request.method == 'POST':
         nonce = request.POST['payment-method-nonce']
