@@ -3,7 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 import braintree
 from .forms import DegreeRegistrationForm
-from .models import Attendee, Campaign, DegreeRegistration, LineItem, Order, Product
+from .models import Attendee, Campaign, Customer, DegreeRegistration, \
+    LineItem, Order, Product
 
 
 braintree.Configuration.configure(
@@ -128,27 +129,41 @@ def fishfry_order(request, pk=None):
     return render(request, 'campaigns/fishfry_order.html', substitutions)
 
 
-
-
 def payment_confirmation_view(request):
     if request.method == 'POST':
         nonce = request.POST['payment-method-nonce']
         order = Order.objects.get(pk=request.POST['order_id'])
+        first_name = request.POST['first-name']
+        last_name = request.POST['last-name']
+        phone_number = request.POST['phone-number']
+        street_address = request.POST['street-address']
+        postal_code = request.POST['postal-code']
+        email = request.POST['email']
+
+        Customer.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            email=email,
+            street_address=street_address,
+            postal_code=postal_code,
+            order=order
+        )
 
         result = braintree.Transaction.sale(
             {
                 "amount": request.POST['payment-amount'],
                 "customer": {
-                    "first_name": request.POST['first-name'],
-                    "last_name": request.POST['last-name'],
-                    "phone": request.POST['phone-number'],
-                    "email": request.POST['email']
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "phone": phone_number,
+                    "email": email
                 },
                 "billing": {
-                    "first_name": request.POST['first-name'],
-                    "last_name": request.POST['last-name'],
-                    "street_address": request.POST['street-address'],
-                    "postal_code": request.POST['postal-code'],
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "street_address": street_address,
+                    "postal_code": postal_code,
                 },
                 "payment_method_nonce": nonce,
                 "options": {
@@ -182,14 +197,14 @@ def payment_confirmation_view(request):
             'order: {}'.format(order_list)
         ]
 
-        campaign = Campaign.objects.get(name='Nut Sales')
+        campaign = Campaign.objects.get(name='Lenten Fish Fry')
         email_addrs = list(campaign.contact.all().values_list('email', flat=True))
         email_addrs.append(request.POST['email'])
 
         msg = EmailMultiAlternatives(
-                'STM Knights Nut Sales Order Confirmation',
+                'STM Knights Website Order Confirmation',
                 ''.join(email_body),
-                'NutSales@STMKnights.org',
+                'STM_KoC_Confirmation@STMKnights.org',
                 set(email_addrs),
         )
         msg.attach_alternative('<br>'.join(email_body), "text/html")
