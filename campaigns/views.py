@@ -204,7 +204,7 @@ def payment_confirmation_view(request):
         msg = EmailMultiAlternatives(
                 'STM Knights Website Order Confirmation',
                 ''.join(email_body),
-                'STM_KoC_Confirmation@STMKnights.org',
+                'noreply@STMKnights.org',
                 set(email_addrs),
         )
         msg.attach_alternative('<br>'.join(email_body), "text/html")
