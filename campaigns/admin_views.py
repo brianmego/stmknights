@@ -63,6 +63,8 @@ def detail_report(request, campaign):
     for order in campaign_order_list:
         order_to_display = []
         for line_item in order.lineitem_set.all():
+            if line_item.quantity == 0:
+                continue
             order_to_display.append(
                 '{} - {}'.format(
                     line_item.product.name,
@@ -73,16 +75,15 @@ def detail_report(request, campaign):
 
         customer = order.customer_set.first()
         if not customer:
-            row_dict['Unknown'] = {
+            row_dict[order.pk] = {
                 'name': 'N/A',
-                'email': 'N/A',
                 'order': order_to_display
             }
             continue
 
         row_dict[customer.email] = {
             'name': '{} {}'.format(customer.first_name, customer.last_name),
-            'email': customer.email,
+            'unique_id': customer.email,
             'order': order_to_display
         }
     row_list = []
