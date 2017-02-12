@@ -18,6 +18,7 @@ from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 
 admin.site = AdminSitePlus()
+admin.sites.site = admin.site
 admin.autodiscover()
 
 urlpatterns = [
