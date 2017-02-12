@@ -110,10 +110,9 @@ def fishfry_order(request, pk=None):
         cart[product.pk] = {
             'id': product.pk,
             'name': product.name,
-            'weight': product.meta_field_one,
             'quantity': 0,
             'cost': product.cost,
-            'image': product.meta_field_two
+            'order': product.sort_order
         }
 
     if pk:
@@ -123,7 +122,7 @@ def fishfry_order(request, pk=None):
 
     substitutions = {
         'order': pk,
-        'products': cart.values(),
+        'products': sorted(cart.values(), key=lambda x: x['order']),
         'header': 'Fish Fry Order Form'
     }
     return render(request, 'campaigns/fishfry_order.html', substitutions)
