@@ -1,0 +1,19 @@
+{% extends 'campaigns/base.html' %}
+
+{% block header_content %}
+    {{ header }}
+{% endblock %}
+
+{% block body %}
+<div class="col-md-12 text detail">
+    {% for row in row_list %}
+    <div class="row">
+        {% for item in row %}
+            <div class="col-md-4">
+                <span>{{ item }} </span>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
