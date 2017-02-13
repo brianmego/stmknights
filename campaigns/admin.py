@@ -20,7 +20,7 @@ class LineItemInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'modified_time', 'total', 'braintree_id', 'voided']
+    list_display = ['id', 'modified_time', 'total', 'braintree_id', 'voided', 'claimed']
     inlines = [
         LineItemInline
     ]

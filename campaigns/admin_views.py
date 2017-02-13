@@ -45,7 +45,8 @@ def aggregate_report(request, campaign):
         row_list.append([item[0], item[1]['count'], '${}'.format(item[1]['total'])])
 
     substitutions = {
-        'row_list': row_list
+        'row_list': row_list,
+        'column_width': int(12 / len(row_list[0]))
     }
     return render(request, 'campaigns/report.html', substitutions)
 
@@ -77,21 +78,27 @@ def detail_report(request, campaign):
         if not customer:
             row_dict[order.pk] = {
                 'name': 'N/A',
+                'unique_id': order.pk,
+                'date': 'N/A',
                 'order': order_to_display
             }
             continue
 
-        row_dict[customer.email] = {
+        row_dict[order.pk] = {
             'name': '{} {}'.format(customer.first_name, customer.last_name),
             'unique_id': customer.email,
+            'date': order.created_time,
             'order': order_to_display
         }
-    row_list = []
-    row_list.append(['Name', 'Email', 'Order'])
-    for item in row_dict.items():
-        row_list.append([item[1]['name'], item[0], item[1]['order']])
 
+    header_row = ['Name', 'Date', 'Email', 'Order']
+    row_list = []
+    for key, value in row_dict.items():
+        row_list.append([value['name'], value['date'], value['unique_id'], value['order']])
+
+    row_list = sorted(row_list, key=lambda x: x[0])
     substitutions = {
-        'row_list': row_list
+        'row_list': [header_row] + row_list,
+        'column_width': int(12 / len(header_row))
     }
     return render(request, 'campaigns/report.html', substitutions)

@@ -85,6 +85,7 @@ class Order(models.Model):
     modified_time = models.DateTimeField(auto_now=True)
     braintree_id = models.CharField(max_length=25, null=True, blank=True)
     voided = models.BooleanField(default=False)
+    claimed = models.BooleanField(default=False)
 
     def get_total(self):
         return sum([x.price_snapshot * x.quantity for x in self.lineitem_set.all()])

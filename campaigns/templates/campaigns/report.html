@@ -9,7 +9,7 @@
     {% for row in row_list %}
     <div class="row">
         {% for item in row %}
-            <div class="col-md-4">
+        <div class="col-md-{{ column_width }}">
                 <span>{{ item }} </span>
             </div>
         {% endfor %}
