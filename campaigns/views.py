@@ -102,6 +102,13 @@ def nuts_order(request, pk=None):
     return render(request, 'campaigns/nuts_order.html', substitutions)
 
 
+def fishfry_closed(request, pk=None):
+    substitutions = {
+        'message': 'Thank you for helping make the 2017 Fish Fry Fridays a success! Have a blessed Easter!'
+    }
+    return render(request, 'campaigns/campaign_closed.html', substitutions)
+
+
 def fishfry_order(request, pk=None):
     products = Product.objects.filter(campaign__name='Lenten Fish Fry')
 
