@@ -1,0 +1,95 @@
+{% extends 'campaigns/sales.html' %}
+
+
+{% block container_content %}
+    <div class="col-md-12">
+        <p>
+            <strong>Where: </strong>Parish Activity Center (PAC)
+        </p>
+        <p>
+            <strong>When: </strong>Fridays Mar 3 - 31, 5-8 PM
+        </p>
+    </div>
+    <div class="col-md-12">
+        <form method="POST" action="/checkout/" class="sales-form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    <h3><strong>Product</strong></h3>
+                </div>
+                <div class="col-md-3">
+                    <h3><strong>Add to Cart</strong></h3>
+                </div>
+                <div class="col-md-1">
+                    <h3><strong>Cost</strong></h3>
+                </div>
+                <!-- <div class="col-md-4"> -->
+                <!-- </div> -->
+            </div>
+            <br>
+            {% for product in products %}
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>
+                        {{ product.name }}
+                    </strong>
+                </div>
+                <div class="col-md-3">
+                    <input class='product-input' id="product-{{ product.id }}" name="product-{{ product.id }}" min="0" type="number" value="{{ product.quantity }}">
+                </div>
+                <div id="product-{{ product.id }}-cost" class="col-md-1">
+                    ${{ product.cost }}
+                </div>
+                <!-- <div class="col-md-4"> -->
+                <!--     <img src=/static/campaigns/img/fishfry/{{ product.image }} width=50%> -->
+                <!-- </div> -->
+            </div>
+            <br>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Total</strong>
+                </div>
+                <div class="col-md-6">
+                    <p id="total">$0</p>
+                </div>
+                <div class="row">
+                    <button type="submit" class="save btn btn-default center">Submit</button>
+                </div>
+            </div>
+            <input type='hidden' name="order_id" value="{{ order }}" />
+        </form>
+    </div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        set_input_events();
+        calculateTotal();
+    });
+
+
+    function set_input_events() {
+        $('input').blur(calculateTotal);
+    }
+
+    function calculateTotal() {
+        var total = 0
+        $('.product-input')
+        .each(
+            function() {
+                total += (
+                    $('#' + $(this).attr('id') + '-cost')
+                        .text()
+                        .trim()
+                        .substr(1)
+                    ) *
+                    $(this).val()
+            }
+        );
+        $('#total').text('$' + total);
+    }
+
+    </script>
+
+{% endblock %}

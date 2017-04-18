@@ -135,6 +135,32 @@ def fishfry_order(request, pk=None):
     return render(request, 'campaigns/fishfry_order.html', substitutions)
 
 
+def crawfish_order(request, pk=None):
+    products = Product.objects.filter(campaign__name='Crawfish Boil')
+
+    cart = {}
+    for product in products:
+        cart[product.pk] = {
+            'id': product.pk,
+            'name': product.name,
+            'quantity': 0,
+            'cost': product.cost,
+            'order': product.sort_order
+        }
+
+    if pk:
+        order = Order.objects.get(pk=pk)
+        for line_item in order.lineitem_set.all():
+            cart[line_item.product.pk]['quantity'] = line_item.quantity
+
+    substitutions = {
+        'order': pk,
+        'products': sorted(cart.values(), key=lambda x: x['order']),
+        'header': 'Crawfish Boil Order Form'
+    }
+    return render(request, 'campaigns/crawfish_order.html', substitutions)
+
+
 def payment_confirmation_view(request):
     if request.method == 'POST':
         nonce = request.POST['payment-method-nonce']
