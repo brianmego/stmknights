@@ -156,7 +156,7 @@ def crawfish_order(request, pk=None):
     substitutions = {
         'order': pk,
         'products': sorted(cart.values(), key=lambda x: x['order']),
-        'header': 'Crawfish Boil Order Form'
+        'header': '1st Annual STM Cajun Crawfish Boil'
     }
     return render(request, 'campaigns/crawfish_order.html', substitutions)
 
