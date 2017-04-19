@@ -2,6 +2,14 @@ from django.shortcuts import render
 from .models import Order
 
 
+def crawfish_boil_agg_report(request):
+    return aggregate_report(request, 'Crawfish Boil')
+
+
+def crawfish_boil_detail_report(request):
+    return detail_report(request, 'Crawfish Boil')
+
+
 def fish_fry_agg_report(request):
     return aggregate_report(request, 'Lenten Fish Fry')
 

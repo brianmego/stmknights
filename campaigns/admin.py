@@ -43,6 +43,8 @@ admin.site.register(models.Order, OrderAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.Customer)
 
+admin.site.register_view('crawfish_boil_aggregate_report', view=admin_views.crawfish_boil_agg_report, name='Crawfish Boil Aggregrate Report')
+admin.site.register_view('crawfish_boil_detail_report', view=admin_views.crawfish_boil_detail_report, name='Crawfish Boil Detail Report')
 admin.site.register_view('fish_fry_aggregate_report', view=admin_views.fish_fry_agg_report, name='Lenten Fish Fry Aggregrate Report')
 admin.site.register_view('fish_fry_detail_report', view=admin_views.fish_fry_detail_report, name='Lenten Fish Fry Detail Report')
 admin.site.register_view('nut_sales_aggregrate_report', view=admin_views.nut_sales_agg_report, name='Nut Sales Aggregate Report')
