@@ -229,7 +229,7 @@ def payment_confirmation_view(request):
             'order: {}'.format(order_list)
         ]
 
-        campaign = Campaign.objects.get(name='Lenten Fish Fry')
+        campaign = Campaign.objects.get(name='Crawfish Boil')
         email_addrs = list(campaign.contact.all().values_list('email', flat=True))
         email_addrs.append(request.POST['email'])
 
