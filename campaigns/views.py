@@ -75,6 +75,54 @@ def degree_registration_new(request):
     return render(request, 'campaigns/registrant_edit.html', substitutions)
 
 
+def generic_order(request, campaign, pk=None):
+    campaign_obj = Campaign.objects.get(lookup_name=campaign)
+
+    if campaign_obj.closed:
+        closed_message = campaign_obj.closed_message
+        if not closed_message:
+            closed_message = 'This campaign is now closed for sales'
+        substitutions = {
+            'header': campaign_obj.name,
+            'message': closed_message
+        }
+        return render(request, 'campaigns/campaign_closed.html', substitutions)
+
+
+    products = Product.objects.filter(campaign=campaign_obj)
+
+    cart = {}
+    for product in products:
+        cart[product.pk] = {
+            'id': product.pk,
+            'name': product.name,
+            'weight': product.meta_field_one,
+            'quantity': 0,
+            'cost': product.cost,
+            'image': product.meta_field_two
+        }
+
+    if pk:
+        order = Order.objects.get(pk=pk)
+        for line_item in order.lineitem_set.all():
+            cart[line_item.product.pk]['quantity'] = line_item.quantity
+
+    header = campaign_obj.header
+    if not header:
+        header = '{} Order Form'.format(campaign_obj.name)
+
+    substitutions = {
+        'order': pk,
+        'campaign': campaign_obj.lookup_name,
+        'products': cart.values(),
+        'header': header,
+        'where': campaign_obj.where,
+        'when': campaign_obj.when,
+        'details': campaign_obj.details,
+    }
+    return render(request, 'campaigns/generic_sales.html', substitutions)
+
+
 def nuts_order(request, pk=None):
     products = Product.objects.filter(campaign__name='Nut Sales')
 
@@ -96,6 +144,7 @@ def nuts_order(request, pk=None):
 
     substitutions = {
         'order': pk,
+        'campaign': 'nuts',
         'products': cart.values(),
         'header': 'Nuts Order Form'
     }
@@ -129,6 +178,7 @@ def fishfry_order(request, pk=None):
 
     substitutions = {
         'order': pk,
+        'campaign': 'fishfry',
         'products': sorted(cart.values(), key=lambda x: x['order']),
         'header': 'Fish Fry Order Form'
     }
@@ -155,6 +205,7 @@ def crawfish_order(request, pk=None):
 
     substitutions = {
         'order': pk,
+        'campaign': 'crawfish',
         'products': sorted(cart.values(), key=lambda x: x['order']),
         'header': '1st Annual STM Cajun Crawfish Boil'
     }
@@ -171,6 +222,7 @@ def payment_confirmation_view(request):
         street_address = request.POST['street-address']
         postal_code = request.POST['postal-code']
         email = request.POST['email']
+        campaign_lookup = request.POST['campaign']
 
         Customer.objects.create(
             first_name=first_name,
@@ -215,6 +267,8 @@ def payment_confirmation_view(request):
                 'error_message': result.message
             }
             return render(request, 'campaigns/checkout.html', substitutions)
+        campaign = Campaign.objects.get(lookup_name=campaign_lookup)
+        substitutions['campaign'] = campaign.lookup_name
 
         order.braintree_id = result.transaction.id
         order.save()
@@ -229,7 +283,6 @@ def payment_confirmation_view(request):
             'order: {}'.format(order_list)
         ]
 
-        campaign = Campaign.objects.get(name='Crawfish Boil')
         email_addrs = list(campaign.contact.all().values_list('email', flat=True))
         email_addrs.append(request.POST['email'])
 
@@ -248,6 +301,7 @@ def checkout_view(request):
     if request.method == 'POST':
         product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
         existing_order_id = request.POST['order_id']
+        campaign = request.POST['campaign']
         if existing_order_id != 'None':
             order = Order.objects.get(pk=existing_order_id)
             order.lineitem_set.all().delete()
@@ -269,6 +323,7 @@ def checkout_view(request):
         substitutions = {
             'header': 'Checkout',
             'order': order,
+            'campaign': campaign,
             'nonce': braintree.ClientToken.generate()
         }
         return render(request, 'campaigns/checkout.html', substitutions)

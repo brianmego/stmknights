@@ -62,6 +62,7 @@
                 <label class='col-md-6' for="expiration-date">Expiration Date</label>
                 <div class="col-md-6 hosted-field" id="expiration-date"></div>
             </div>
+            <input type='hidden' name="campaign" value="{{ campaign }}" />
             <input type="hidden" name="payment-method-nonce">
             <input type="hidden" name="payment-amount">
             <input type="submit" value="Pay ${{ order.get_total }}" disabled>
@@ -69,7 +70,7 @@
     </form>
 
     <div>
-        <a href='/crawfish/order/{{ order.id }}'>Change order</a>
+        <a href='/{{ campaign }}/order/{{ order.id }}'>Change order</a>
     </div>
 
 

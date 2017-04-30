@@ -42,6 +42,7 @@ admin.site.register(models.Contact)
 admin.site.register(models.Order, OrderAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.Customer)
+# admin.site.register(models.LineItem)  # Don't want to delete sales history!
 
 admin.site.register_view('crawfish_boil_aggregate_report', view=admin_views.crawfish_boil_agg_report, name='Crawfish Boil Aggregrate Report')
 admin.site.register_view('crawfish_boil_detail_report', view=admin_views.crawfish_boil_detail_report, name='Crawfish Boil Detail Report')

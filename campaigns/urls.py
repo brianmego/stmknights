@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^nuts/order/(?P<pk>[\w+-]+)?$', views.nuts_order, name='nut_orders'),
     url(r'^fishfry/order/(?P<pk>[\w+-]+)?$', views.fishfry_closed, name='fishfry_orders'),
     url(r'^crawfish/order/(?P<pk>[\w+-]+)?$', views.crawfish_order, name='crawfish_orders'),
+    url(r'^(?P<campaign>[\w+]+)/order/(?P<pk>[\w+-]+)?$', views.generic_order, name='order'),
     url(r'^checkout/$', views.checkout_view, name='checkout'),
     url(r'^payment_confirmation/$', views.payment_confirmation_view, name='payment_confirmation'),
 ]

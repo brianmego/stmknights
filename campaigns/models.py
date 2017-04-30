@@ -38,6 +38,13 @@ class Attendee(models.Model):
 
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
+    lookup_name = models.CharField(max_length=100, default='')
+    header = models.CharField(max_length=100, null=True, blank=True)
+    where = models.TextField(null=True, blank=True)
+    when = models.TextField(null=True, blank=True)
+    closed = models.BooleanField(default=False)
+    closed_message = models.TextField(null=True, blank=True)
+    details = models.TextField(null=True, blank=True)
     contact = models.ManyToManyField(Contact)
 
     def __str__(self):
