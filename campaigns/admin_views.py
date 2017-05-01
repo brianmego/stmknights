@@ -28,7 +28,8 @@ def nut_sales_detail_report(request):
 
 def aggregate_report(request, campaign):
     order_list = Order.objects.filter(
-        braintree_id__isnull=False
+        braintree_id__isnull=False,
+        voided=False
     )
     campaign_order_list = []
     for order in order_list:
@@ -61,7 +62,8 @@ def aggregate_report(request, campaign):
 
 def detail_report(request, campaign):
     order_list = Order.objects.filter(
-        braintree_id__isnull=False
+        braintree_id__isnull=False,
+        voided=False
     )
     campaign_order_list = []
     for order in order_list:
