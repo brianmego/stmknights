@@ -99,6 +99,7 @@ def generic_order(request, campaign, pk=None):
             'weight': product.meta_field_one,
             'quantity': 0,
             'cost': product.cost,
+            'order': product.sort_order,
             'image': product.meta_field_two
         }
 
