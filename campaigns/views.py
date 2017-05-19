@@ -114,7 +114,7 @@ def generic_order(request, campaign, pk=None):
     substitutions = {
         'order': pk,
         'campaign': campaign_obj.lookup_name,
-        'products': cart.values(),
+        'products': sorted(cart.values(), key=lambda x: x['order']),
         'header': header,
         'where': campaign_obj.where,
         'when': campaign_obj.when,
@@ -211,6 +211,11 @@ def crawfish_order(request, pk=None):
     }
     return render(request, 'campaigns/crawfish_order.html', substitutions)
 
+def crawfish_closed(request, pk=None):
+    substitutions = {
+        'message': 'This campaign is now closed for sales'
+    }
+    return render(request, 'campaigns/campaign_closed.html', substitutions)
 
 def payment_confirmation_view(request):
     if request.method == 'POST':
