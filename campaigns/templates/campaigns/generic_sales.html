@@ -9,12 +9,13 @@
     {% block container_content %}
     <div class="col-md-12">
         <p>
-            <strong>Where: </strong>{{where}}
+            <strong>Where: </strong>{{ where }}
         </p>
-            <strong>When: </strong>{{when}}
+            <strong>When: </strong>{{ when }}
         </p>
         <p>
-            <strong>Details: </strong>{{details}}
+            <strong>Details: </strong>
+            {{ details|safe }}
         </p>
     </div>
     <div class="col-md-12">

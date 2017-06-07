@@ -121,7 +121,8 @@ def generic_order(request, campaign, pk=None):
         'when': campaign_obj.when,
         'details': campaign_obj.details,
     }
-    return render(request, 'campaigns/generic_sales.html', substitutions)
+    template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
+    return render(request, template_name, substitutions)
 
 
 def nuts_order(request, pk=None):

@@ -1,0 +1,27 @@
+{% extends 'campaigns/base.html' %}
+{% load staticfiles %}
+
+{% block header_content %}
+    {{ header }}
+    <a href="http://www.stmaustin.org/mobile-loaves-fishes">
+        <img src="{% static 'campaigns/img/mlf_logo.jpg' %}">
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="col-md-12 container">
+    {% block container_content %}
+    <div class="col-md-12">
+        <form method="POST" action="/checkout/" class="sales-form">
+            {% csrf_token %}
+
+            {{ details|safe }}
+            <input type='hidden' name="order_id" value="{{ order }}" />
+            <input type='hidden' name="campaign" value="{{ campaign }}" />
+        </form>
+    </div>
+    {% endblock %}
+</div>
+
+<img src="{% static 'campaigns/img/CAPT_logo_RGB_small.jpg' %}">
+{% endblock %}
