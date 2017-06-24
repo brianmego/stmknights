@@ -33,11 +33,11 @@ def generic_order(request, campaign, pk=None):
         cart[product.pk] = {
             'id': product.pk,
             'name': product.name,
-            'weight': product.meta_field_one,
+            'meta_field_one': product.meta_field_one,
             'quantity': 0,
             'cost': product.cost,
             'order': product.sort_order,
-            'image': product.meta_field_two
+            'meta_field_two': product.meta_field_two
         }
 
     if pk:
@@ -148,7 +148,7 @@ def payment_confirmation_view(request):
 
 def checkout_view(request):
     if request.method == 'POST':
-        product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
+        product_inputs = {x[0]: x[1] for x in request.POST.items() if x[1].startswith('product-')}
         existing_order_id = request.POST['order_id']
         campaign = request.POST['campaign']
         if existing_order_id != 'None':
@@ -157,15 +157,20 @@ def checkout_view(request):
         else:
             order = Order.objects.create()
 
-        for key, value in product_inputs.items():
+        for name, value in product_inputs.items():
             if not value:
                 continue
-            pk = key.split('product-')[1]
+            if value.startswith('product-'):
+                pk = value.split('product-')[1]
+                quantity = 1
+            else:
+                pk = name.split('product-')[1]
+                quantity = value
             product = Product.objects.get(pk=pk)
             LineItem.objects.create(
                 product=product,
                 order=order,
-                quantity=value,
+                quantity=quantity,
                 price_snapshot=product.cost
             )
 
