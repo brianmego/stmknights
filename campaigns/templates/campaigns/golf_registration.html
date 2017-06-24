@@ -12,13 +12,117 @@
 <div class="col-md-12 container">
     {% block container_content %}
     <div class="col-md-12">
-        <form method="POST" action="/checkout/" class="sales-form">
-            {% csrf_token %}
+        <div class="inner-bg">
+            <div class="container">
 
-            {{ details|safe }}
-            <input type='hidden' name="order_id" value="{{ order }}" />
-            <input type='hidden' name="campaign" value="{{ campaign }}" />
-        </form>
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text">
+                        <div class="description">
+                            <p>
+                            Fourth annual fundraiser for the benefit of
+                            <a href="http://www.stmaustin.org/mobile-loaves-fishes" target="_blank"><strong>Mobile Loaves and Fishes</strong></a>
+                            held at the <a href="http://twincreeksclub.com" target="_blank"><strong>Twin Creeks Country Club</strong></a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-5 text detail">
+                        <p>
+                            <strong>When: </strong>October 10, 2016
+                        </p>
+                        <p>
+                            <strong>Where: </strong> Twin Creeks Country Club<br>3201 Twin Creeks Club Drive<br>Cedar Park, TX 78613
+                        </p>
+                        <p>
+                            <strong>Registration: </strong>10:30 AM
+                        </p>
+                        <p>
+                            <strong>Start: </strong>12:30 PM
+                        </p>
+                        <br>
+                        <div class="left">
+                            <p>
+                                <strong>Details</strong>
+                                <ul type='disc'>
+                                    <li>$125/player</li>
+                                    <li>Up to four members on a team</li>
+                                    <li>Lunch included prior to tournament start</li>
+                                    <li>Practice facilities and range balls will be provided</li>
+                                    <li>3 mulligans per person</li>
+                                    <li>Soft drinks and on-course beverages will be provided</li>
+                                    <li>Dinner following the event</li>
+                                    <li>Hole-In-One prizes on all four par 3 holes!</li>
+                                </ul>
+                            </p>
+                            <br>
+                            <p>
+                                <strong>Sponsorship Opportunities</strong>
+                                <ul type='disc'>
+                                    <li>Par Sponsor - $200 - Includes hole signage and 1 complimentary player entry</li>
+                                    <li>Birdie Sponsor - $325 - Includes hole signage and 2 complimentary player entry</li>
+                                    <li>Eagle Sponsor - $575 - Includes hole signage and 4 complimentary player entry</li>
+                                    <li>Tournament Sponsor - $1500 - Includes 2 complimentary foursomes, banner at the clubhouse, and special recognition at dinner following the event</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-1 middle-border"></div>
+
+                    <div class="col-sm-5">
+
+                        <div class="form-box">
+                            <div class="form-top">
+                                <div class="form-top-left">
+                                    <h3>Sign up now</h3>
+                                    <p>Teams can have up to 4 players</p>
+                                </div>
+                                <div class="form-top-right">
+                                    <i class="fa fa-pencil"></i>
+                                </div>
+                            </div>
+                            <div class="form-bottom">
+                                <form method="POST" action="/checkout/" class="sales-form">
+                                    {% csrf_token %}
+
+                                    <div class="form-group">
+                                        <p>Player 1</p>
+                                        <input type="text" name="player-one-name" placeholder="Name..." class="form-first-name form-control required" id="form-first-name-1">
+                                        <input type="text" name="player-one-email" placeholder="Email..." class="form-email form-control required" id="form-email-1">
+                                    </div>
+                                    <div class="form-group">
+                                        <p>Player 2</p>
+                                        <input type="text" name="player-two-name" placeholder="Name..." class="form-first-name form-control" id="form-first-name-2">
+                                        <input type="text" name="player-two-email" placeholder="Email..." class="form-email form-control" id="form-email-2">
+                                    </div>
+                                    <div class="form-group">
+                                        <p>Player 3</p>
+                                        <input type="text" name="player-three-name" placeholder="Name..." class="form-first-name form-control" id="form-first-name-3">
+                                        <input type="text" name="player-three-email" placeholder="Email..." class="form-email form-control" id="form-email-3">
+                                    </div>
+                                    <div class="form-group">
+                                        <p>Player 4</p>
+                                        <input type="text" name="player-four-name" placeholder="Name..." class="form-first-name form-control" id="form-first-name-4">
+                                        <input type="text" name="player-four-email" placeholder="Email..." class="form-email form-control" id="form-email-4">
+                                    </div>
+                                    <input type="radio" name="sponsorship" value="par-sponsor" checked> Default Registration<br>
+                                    <input type="radio" name="sponsorship" value="par-sponsor"> Par Level Sponsor<br>
+                                    <input type="radio" name="sponsorship" value="birdie-sponsor"> Birdie Level Sponsor<br>
+                                    <input type="radio" name="sponsorship" value="eagle-sponsor"> Eagle Level Sponsor<br>
+                                    <input type="radio" name="sponsorship" value="tournament-sponsor"> Tournament Level Sponsor<br>
+                                    <button type="submit" class="btn">Sign me up!</button>
+
+                                    <input type='hidden' name="order_id" value="{{ order }}" />
+                                    <input type='hidden' name="campaign" value="{{ campaign }}" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     {% endblock %}
 </div>

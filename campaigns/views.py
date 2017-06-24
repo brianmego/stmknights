@@ -2,9 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 import braintree
-from .forms import DegreeRegistrationForm
-from .models import Attendee, Campaign, Customer, DegreeRegistration, \
-    LineItem, Order, Product
+from .models import Campaign, Customer, LineItem, Order, Product
 
 
 braintree.Configuration.configure(
@@ -13,67 +11,6 @@ braintree.Configuration.configure(
     public_key=settings.BRAINTREE_PUBLIC_KEY,
     private_key=settings.BRAINTREE_PRIVATE_KEY
 )
-
-
-def degree_thank_you(request, pk):
-    reg = DegreeRegistration.objects.get(pk=pk)
-    candidate_count = reg.attendees.filter(attendee_type__name='Candidate').count()
-    guest_count = reg.attendees.filter(attendee_type__name='Guest').count()
-    return render(
-        request,
-        'campaigns/thankyou.html',
-        {
-            'header': 'Thank You!',
-            'candidates': candidate_count,
-            'guests': guest_count,
-            'medallions': reg.medallions,
-            'cost': reg.cost
-        }
-    )
-
-
-def degree_registration_new(request):
-    if request.method == 'POST':
-        post = request.POST
-        form = DegreeRegistrationForm(post)
-        if form.is_valid():
-            reg = form.save(commit=False)
-            reg.attending_council = post['attending_council']
-            reg.attending_council_num = post['attending_council_num']
-            reg.medallions = post['medallions']
-            reg.cost = 0
-            reg.save()
-            attendee_types = ['Candidate', 'Guest']
-            total_cost = int(reg.medallions) * Product.objects.get(name='Medallion').cost
-            for att_type in attendee_types:
-                for name in post.getlist(att_type.lower()):
-                    if not name:
-                        continue
-                    attendee = Attendee.objects.create(
-                        name=name,
-                        attendee_type=Product.objects.get(
-                            name=att_type,
-                            campaign=Campaign.objects.get(name='Major Degree')
-                        ),
-                        degree_registration_id=reg.pk
-                    )
-                    total_cost += attendee.attendee_type.cost
-                    total_cost += 1  # Admin fee
-            reg.cost = total_cost
-            reg.save()
-            return redirect('degree_thank_you', pk=reg.pk)
-    form = DegreeRegistrationForm()
-
-    products = Product.objects.all()
-    costs = {x.name: x.cost for x in products}
-    substitutions = {
-        'form': form,
-        'costs': costs,
-        'header': 'Major Degree Registration'
-    }
-
-    return render(request, 'campaigns/registrant_edit.html', substitutions)
-
 
 def generic_order(request, campaign, pk=None):
     campaign_obj = Campaign.objects.get(lookup_name=campaign)
@@ -123,101 +60,6 @@ def generic_order(request, campaign, pk=None):
     }
     template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
     return render(request, template_name, substitutions)
-
-
-def nuts_order(request, pk=None):
-    products = Product.objects.filter(campaign__name='Nut Sales')
-
-    cart = {}
-    for product in products:
-        cart[product.pk] = {
-            'id': product.pk,
-            'name': product.name,
-            'weight': product.meta_field_one,
-            'quantity': 0,
-            'cost': product.cost,
-            'image': product.meta_field_two
-        }
-
-    if pk:
-        order = Order.objects.get(pk=pk)
-        for line_item in order.lineitem_set.all():
-            cart[line_item.product.pk]['quantity'] = line_item.quantity
-
-    substitutions = {
-        'order': pk,
-        'campaign': 'nuts',
-        'products': cart.values(),
-        'header': 'Nuts Order Form'
-    }
-    return render(request, 'campaigns/nuts_order.html', substitutions)
-
-
-def fishfry_closed(request, pk=None):
-    substitutions = {
-        'message': 'Thank you for helping make the 2017 Fish Fry Fridays a success! Have a blessed Easter!'
-    }
-    return render(request, 'campaigns/campaign_closed.html', substitutions)
-
-
-def fishfry_order(request, pk=None):
-    products = Product.objects.filter(campaign__name='Lenten Fish Fry')
-
-    cart = {}
-    for product in products:
-        cart[product.pk] = {
-            'id': product.pk,
-            'name': product.name,
-            'quantity': 0,
-            'cost': product.cost,
-            'order': product.sort_order
-        }
-
-    if pk:
-        order = Order.objects.get(pk=pk)
-        for line_item in order.lineitem_set.all():
-            cart[line_item.product.pk]['quantity'] = line_item.quantity
-
-    substitutions = {
-        'order': pk,
-        'campaign': 'fishfry',
-        'products': sorted(cart.values(), key=lambda x: x['order']),
-        'header': 'Fish Fry Order Form'
-    }
-    return render(request, 'campaigns/fishfry_order.html', substitutions)
-
-
-def crawfish_order(request, pk=None):
-    products = Product.objects.filter(campaign__name='Crawfish Boil')
-
-    cart = {}
-    for product in products:
-        cart[product.pk] = {
-            'id': product.pk,
-            'name': product.name,
-            'quantity': 0,
-            'cost': product.cost,
-            'order': product.sort_order
-        }
-
-    if pk:
-        order = Order.objects.get(pk=pk)
-        for line_item in order.lineitem_set.all():
-            cart[line_item.product.pk]['quantity'] = line_item.quantity
-
-    substitutions = {
-        'order': pk,
-        'campaign': 'crawfish',
-        'products': sorted(cart.values(), key=lambda x: x['order']),
-        'header': '1st Annual STM Cajun Crawfish Boil'
-    }
-    return render(request, 'campaigns/crawfish_order.html', substitutions)
-
-def crawfish_closed(request, pk=None):
-    substitutions = {
-        'message': 'This campaign is now closed for sales'
-    }
-    return render(request, 'campaigns/campaign_closed.html', substitutions)
 
 def payment_confirmation_view(request):
     if request.method == 'POST':
