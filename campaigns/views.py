@@ -148,7 +148,7 @@ def payment_confirmation_view(request):
 
 def checkout_view(request):
     if request.method == 'POST':
-        product_inputs = {x[0]: x[1] for x in request.POST.items() if x[1].startswith('product-')}
+        product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
         existing_order_id = request.POST['order_id']
         campaign = request.POST['campaign']
         if existing_order_id != 'None':
@@ -173,6 +173,7 @@ def checkout_view(request):
                 quantity=quantity,
                 price_snapshot=product.cost
             )
+        calculate_campaign_promotions(campaign, product_inputs, order)
 
         substitutions = {
             'header': 'Checkout',
@@ -181,3 +182,33 @@ def checkout_view(request):
             'nonce': braintree.ClientToken.generate()
         }
         return render(request, 'campaigns/checkout.html', substitutions)
+
+def calculate_campaign_promotions(campaign, product_inputs, order):
+    if campaign == 'golf2017':
+        player_product = Product.objects.get(campaign__lookup_name='golf2017', name='Player')
+        players = int(product_inputs.get('product-{}'.format(player_product.pk)))
+        sponsorship = product_inputs.get('product-sponsorship')
+        players_to_charge = players
+        if sponsorship:
+            sponsorship_name = Product.objects.get(pk=sponsorship.split('-')[1]).name
+            if sponsorship_name == 'Par Sponsor':
+                players_to_charge -= 1
+            elif sponsorship_name == 'Birdie Sponsor':
+                players_to_charge -= 2
+            elif sponsorship_name == 'Eagle Sponsor':
+                players_to_charge -= 4
+            elif sponsorship_name == 'Tournament Sponsor':
+                players_to_charge -= 8
+            if players_to_charge < 0:
+                players_to_charge = 0
+        discounts = players - players_to_charge
+        if discounts > 0:
+            discount_product = Product.objects.get(campaign__lookup_name='golf2017', name='Complementary Player')
+            LineItem.objects.create(
+                product=discount_product,
+                order=order,
+                quantity=discounts,
+                price_snapshot=player_product.cost * -1
+            )
+
+
