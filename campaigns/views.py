@@ -72,6 +72,7 @@ def payment_confirmation_view(request):
         postal_code = request.POST['postal-code']
         email = request.POST['email']
         campaign_lookup = request.POST['campaign']
+        payment_amount = request.POST['payment-amount']
 
         Customer.objects.create(
             first_name=first_name,
@@ -85,7 +86,7 @@ def payment_confirmation_view(request):
 
         result = braintree.Transaction.sale(
             {
-                "amount": request.POST['payment-amount'],
+                "amount": payment_amount,
                 "customer": {
                     "first_name": first_name,
                     "last_name": last_name,
@@ -124,13 +125,15 @@ def payment_confirmation_view(request):
 
         order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
         email_body = [
-            'name: {} {}'.format(request.POST['first-name'], request.POST['last-name']),
-            'address: {}'.format(request.POST['street-address']),
-            'postal_code: {}'.format(request.POST['postal-code']),
-            'phone: {}'.format(request.POST['phone-number']),
-            'amount: ${}'.format(request.POST['payment-amount']),
-            'order: {}'.format(order_list)
+            'Name: {} {}'.format(first_name, last_name),
+            'Address: {}'.format(street_address),
+            'Postal Code: {}'.format(postal_code),
+            'Phone: {}'.format(phone_number),
+            'Amount: ${}'.format(payment_amount),
+            'Order: {}'.format(order_list)
         ]
+        if order.extra:
+            email_body.append('Extra Info: {}'.format(order.extra))
 
         email_addrs = list(campaign.contact.all().values_list('email', flat=True))
         email_addrs.append(request.POST['email'])
@@ -173,7 +176,7 @@ def checkout_view(request):
                 quantity=quantity,
                 price_snapshot=product.cost
             )
-        calculate_campaign_promotions(campaign, product_inputs, order)
+        campaign_specific_checkout(campaign, request, order)
 
         substitutions = {
             'header': 'Checkout',
@@ -183,7 +186,8 @@ def checkout_view(request):
         }
         return render(request, 'campaigns/checkout.html', substitutions)
 
-def calculate_campaign_promotions(campaign, product_inputs, order):
+def campaign_specific_checkout(campaign, request, order):
+    product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
     if campaign == 'golf2017':
         player_product = Product.objects.get(campaign__lookup_name='golf2017', name='Player')
         players = int(product_inputs.get('product-{}'.format(player_product.pk)))
@@ -210,5 +214,9 @@ def calculate_campaign_promotions(campaign, product_inputs, order):
                 quantity=discounts,
                 price_snapshot=player_product.cost * -1
             )
+        player_names = request.POST.getlist('player')
+        extra_text = 'Player Names: {}'.format(', '.join(player_names))
+        order.extra = extra_text
+        order.save()
 
 

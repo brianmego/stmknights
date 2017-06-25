@@ -94,6 +94,7 @@ class Order(models.Model):
     braintree_id = models.CharField(max_length=25, null=True, blank=True)
     voided = models.BooleanField(default=False)
     claimed = models.BooleanField(default=False)
+    extra = models.TextField(null=True, blank=True)
 
     def get_total(self):
         return sum([x.price_snapshot * x.quantity for x in self.lineitem_set.all()])
