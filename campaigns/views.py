@@ -107,7 +107,6 @@ def payment_confirmation_view(request):
         }
         if campaign.merchant_account_id:
             transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
-        print(transaction_sale_body)
 
         result = braintree.Transaction.sale(transaction_sale_body)
         substitutions = {
