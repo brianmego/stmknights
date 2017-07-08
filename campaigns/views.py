@@ -61,6 +61,7 @@ def generic_order(request, campaign, pk=None):
     template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
     return render(request, template_name, substitutions)
 
+
 def payment_confirmation_view(request):
     if request.method == 'POST':
         nonce = request.POST['payment-method-nonce']
@@ -73,6 +74,7 @@ def payment_confirmation_view(request):
         email = request.POST['email']
         campaign_lookup = request.POST['campaign']
         payment_amount = request.POST['payment-amount']
+        campaign = Campaign.objects.get(lookup_name=campaign_lookup)
 
         Customer.objects.create(
             first_name=first_name,
@@ -84,27 +86,30 @@ def payment_confirmation_view(request):
             order=order
         )
 
-        result = braintree.Transaction.sale(
-            {
-                "amount": payment_amount,
-                "customer": {
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "phone": phone_number,
-                    "email": email
-                },
-                "billing": {
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "street_address": street_address,
-                    "postal_code": postal_code,
-                },
-                "payment_method_nonce": nonce,
-                "options": {
-                    "submit_for_settlement": True
-                }
+        transaction_sale_body = {
+            "amount": payment_amount,
+            "customer": {
+                "first_name": first_name,
+                "last_name": last_name,
+                "phone": phone_number,
+                "email": email
+            },
+            "billing": {
+                "first_name": first_name,
+                "last_name": last_name,
+                "street_address": street_address,
+                "postal_code": postal_code,
+            },
+            "payment_method_nonce": nonce,
+            "options": {
+                "submit_for_settlement": True
             }
-        )
+        }
+        if campaign.merchant_account_id:
+            transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
+        print(transaction_sale_body)
+
+        result = braintree.Transaction.sale(transaction_sale_body)
         substitutions = {
             'result': result
         }
@@ -117,7 +122,6 @@ def payment_confirmation_view(request):
                 'error_message': result.message
             }
             return render(request, 'campaigns/checkout.html', substitutions)
-        campaign = Campaign.objects.get(lookup_name=campaign_lookup)
         substitutions['campaign'] = campaign.lookup_name
 
         order.braintree_id = result.transaction.id

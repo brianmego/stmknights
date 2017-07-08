@@ -39,6 +39,13 @@ class Attendee(models.Model):
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
     lookup_name = models.CharField(max_length=100, default='')
+    merchant_account_id = models.ForeignKey(
+        'MerchantAccountId',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="campaigns"
+    )
     template_name = models.CharField(max_length=100, default='generic_sales')
     header = models.CharField(max_length=100, null=True, blank=True)
     where = models.TextField(null=True, blank=True)
@@ -50,6 +57,13 @@ class Campaign(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MerchantAccountId(models.Model):
+    label = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.label
 
 
 class Product(models.Model):
