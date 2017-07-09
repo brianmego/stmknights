@@ -26,6 +26,13 @@ def nut_sales_detail_report(request):
     return detail_report(request, 'Nut Sales')
 
 
+def sonogram_agg_report(request):
+    return aggregate_report(request, 'Sonogram Fundraiser')
+
+
+def sonogram_detail_report(request):
+    return detail_report(request, 'Sonogram Fundraiser')
+
 def aggregate_report(request, campaign):
     order_list = Order.objects.filter(
         braintree_id__isnull=False,

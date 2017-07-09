@@ -171,7 +171,7 @@ def checkout_view(request):
                 quantity = 1
             else:
                 pk = name.split('product-')[1]
-                quantity = value
+                quantity = int(float(value))
             product = Product.objects.get(pk=pk)
             LineItem.objects.create(
                 product=product,

@@ -51,3 +51,5 @@ admin.site.register_view('fish_fry_aggregate_report', view=admin_views.fish_fry_
 admin.site.register_view('fish_fry_detail_report', view=admin_views.fish_fry_detail_report, name='Lenten Fish Fry Detail Report')
 admin.site.register_view('nut_sales_aggregrate_report', view=admin_views.nut_sales_agg_report, name='Nut Sales Aggregate Report')
 admin.site.register_view('nut_sales_detail_report', view=admin_views.nut_sales_detail_report, name='Nut Sales Detail Report')
+admin.site.register_view('sonogram_aggregrate_report', view=admin_views.sonogram_agg_report, name='Sonogram Aggregate Report')
+admin.site.register_view('sonogram_detail_report', view=admin_views.sonogram_detail_report, name='Sonogram Detail Report')
