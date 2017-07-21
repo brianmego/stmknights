@@ -61,6 +61,16 @@
                     <button type="submit" class="save btn btn-default center">Submit</button>
                 </div>
             </div>
+            <div class="row">
+                {% for tag in tags %}
+                <div class="col-md-6">
+                    <strong>{{ tag.key }}</strong>
+                </div>
+                <div class="col-md-6">
+                    <input class="campaign-tags" id="tag-{{ tag.id }}" name="tag-{{ tag.id }}" min="0" value="{{ tag.value }}">
+                </div>
+                {% endfor %}
+            </div>
             <input type='hidden' name="order_id" value="{{ order }}" />
             <input type='hidden' name="campaign" value="{{ campaign }}" />
         </form>

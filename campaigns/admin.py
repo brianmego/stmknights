@@ -34,9 +34,16 @@ class DegreeRegistrationAdmin(admin.ModelAdmin):
         AttendeeInline
     ]
 
+class CampaignTagInline(admin.TabularInline):
+    model = models.CampaignTag
+
+class CampaignAdmin(admin.ModelAdmin):
+    inlines = [
+        CampaignTagInline
+    ]
 
 admin.site.register(models.DegreeRegistration, DegreeRegistrationAdmin)
-admin.site.register(models.Campaign)
+admin.site.register(models.Campaign, CampaignAdmin)
 admin.site.register(models.Attendee)
 admin.site.register(models.Contact)
 admin.site.register(models.Order, OrderAdmin)

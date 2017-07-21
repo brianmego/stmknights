@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 import braintree
-from .models import Campaign, Customer, LineItem, Order, Product
+from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
 
 
 braintree.Configuration.configure(
@@ -57,6 +57,7 @@ def generic_order(request, campaign, pk=None):
         'where': campaign_obj.where,
         'when': campaign_obj.when,
         'details': campaign_obj.details,
+        'tags': campaign_obj.campaigntag_set.all()
     }
     template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
     return render(request, template_name, substitutions)
@@ -155,6 +156,7 @@ def payment_confirmation_view(request):
 def checkout_view(request):
     if request.method == 'POST':
         product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
+        campaign_tags = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('tag-')}
         existing_order_id = request.POST['order_id']
         campaign = request.POST['campaign']
         if existing_order_id != 'None':
@@ -179,6 +181,13 @@ def checkout_view(request):
                 quantity=quantity,
                 price_snapshot=product.cost
             )
+
+        for name, value in campaign_tags.items():
+            pk = name.split('tag-')[1]
+            tag = CampaignTag.objects.get(pk=pk)
+            order.extra = '{}:{}'.format(tag.key, value)
+            order.save()
+
         campaign_specific_checkout(campaign, request, order)
 
         substitutions = {
@@ -188,6 +197,7 @@ def checkout_view(request):
             'nonce': braintree.ClientToken.generate()
         }
         return render(request, 'campaigns/checkout.html', substitutions)
+
 
 def campaign_specific_checkout(campaign, request, order):
     product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}

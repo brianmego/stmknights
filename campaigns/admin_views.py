@@ -40,6 +40,8 @@ def aggregate_report(request, campaign):
     )
     campaign_order_list = []
     for order in order_list:
+        if order.lineitem_set.first() is None:
+            continue
         if order.lineitem_set.first().product.campaign.name == campaign:
             campaign_order_list.append(order)
 
@@ -74,6 +76,8 @@ def detail_report(request, campaign):
     )
     campaign_order_list = []
     for order in order_list:
+        if order.lineitem_set.first() is None:
+            continue
         if order.lineitem_set.first().product.campaign.name == campaign:
             campaign_order_list.append(order)
 
@@ -105,13 +109,14 @@ def detail_report(request, campaign):
             'name': '{} {}'.format(customer.first_name, customer.last_name),
             'unique_id': customer.email,
             'date': order.created_time,
-            'order': order_to_display
+            'order': order_to_display,
+            'extra': order.extra
         }
 
-    header_row = ['Name', 'Date', 'Email', 'Order']
+    header_row = ['Name', 'Date', 'Email', 'Order', 'Extra']
     row_list = []
     for key, value in row_dict.items():
-        row_list.append([value['name'], value['date'], value['unique_id'], value['order']])
+        row_list.append([value['name'], value['date'], value['unique_id'], value['order'], value['extra']])
 
     row_list = sorted(row_list, key=lambda x: x[0])
     substitutions = {

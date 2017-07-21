@@ -58,6 +58,11 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
+class CampaignTag(models.Model):
+    order = models.ForeignKey('Campaign')
+    key = models.CharField(max_length=50)
+    value = models.CharField(max_length=50)
+
 
 class MerchantAccountId(models.Model):
     label = models.CharField(max_length=100)
@@ -114,7 +119,9 @@ class Order(models.Model):
         return sum([x.price_snapshot * x.quantity for x in self.lineitem_set.all()])
 
     def __str__(self):
-        campaign = self.lineitem_set.first().product.campaign
+        campaign = None
+        if self.lineitem_set.first():
+            campaign = self.lineitem_set.first().product.campaign
         return '{} - {}'.format(
             campaign,
             self.id
@@ -122,6 +129,7 @@ class Order(models.Model):
 
     class Meta:
         ordering = ['-modified_time']
+
 
 
 class Customer(models.Model):
