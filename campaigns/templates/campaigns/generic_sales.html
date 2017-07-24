@@ -64,7 +64,7 @@
             <div class="row">
                 {% for tag in tags %}
                 <div class="col-md-6">
-                    <strong>{{ tag.key }}</strong>
+                    <strong>{{ tag.key|safe }}</strong>
                 </div>
                 <div class="col-md-6">
                     <input class="campaign-tags" id="tag-{{ tag.id }}" name="tag-{{ tag.id }}" min="0" value="{{ tag.value }}">
