@@ -117,6 +117,14 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <strong>Donation $</strong>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" min="0" name="donation" class="form-control" placeholder="0" id="donation">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <strong>Total</strong>
                                         </div>
                                         <div class="col-md-6">
@@ -211,6 +219,10 @@ function calculateTotal() {
         players = 0;
     }
     total += (players * cost_of_a_player);
+    var donation_amt = $('#donation').val() * 1;
+    if (!isNaN(donation_amt)) {
+        total += donation_amt;
+    }
     $('#total').text('$' + total);
 }
 

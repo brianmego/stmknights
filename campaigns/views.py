@@ -201,10 +201,12 @@ def checkout_view(request):
 
 def campaign_specific_checkout(campaign, request, order):
     product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
-    if campaign == 'golf2017':
-        player_product = Product.objects.get(campaign__lookup_name='golf2017', name='Player')
+    campaign_lookup_name = 'golf2017'
+    if campaign == campaign_lookup_name:
+        player_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Player')
         players = int(product_inputs.get('product-{}'.format(player_product.pk)))
         sponsorship = product_inputs.get('product-sponsorship')
+        donation = request.POST['donation']
         players_to_charge = players
         if sponsorship:
             sponsorship_name = Product.objects.get(pk=sponsorship.split('-')[1]).name
@@ -220,13 +222,30 @@ def campaign_specific_checkout(campaign, request, order):
                 players_to_charge = 0
         discounts = players - players_to_charge
         if discounts > 0:
-            discount_product = Product.objects.get(campaign__lookup_name='golf2017', name='Complementary Player')
+            discount_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Complementary Player')
             LineItem.objects.create(
                 product=discount_product,
                 order=order,
                 quantity=discounts,
                 price_snapshot=player_product.cost * -1
             )
+        is_donation = False
+        try:
+            float(donation)
+            is_donation = True
+        except:
+            pass
+
+        if is_donation:
+            donation_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Donation')
+            donation_amt = int(float(donation))
+            LineItem.objects.create(
+                product=donation_product,
+                order=order,
+                quantity=donation_amt,
+                price_snapshot=1
+            )
+
         player_names = request.POST.getlist('player')
         extra_text = 'Player Names: {}'.format(', '.join(player_names))
         order.extra = extra_text
