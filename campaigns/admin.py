@@ -60,3 +60,5 @@ admin.site.register_view('nut_sales_aggregrate_report', view=admin_views.nut_sal
 admin.site.register_view('nut_sales_detail_report', view=admin_views.nut_sales_detail_report, name='Nut Sales Detail Report')
 admin.site.register_view('sonogram_aggregrate_report', view=admin_views.sonogram_agg_report, name='Sonogram Aggregate Report')
 admin.site.register_view('sonogram_detail_report', view=admin_views.sonogram_detail_report, name='Sonogram Detail Report')
+admin.site.register_view('2017_golf_aggregate_report', view=admin_views.golf_agg_report, name='2017 Golf Classic Aggregate Report')
+admin.site.register_view('2017_golf_detail_report', view=admin_views.golf_detail_report, name='2017 Golf Classic Detail Report')

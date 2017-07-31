@@ -33,6 +33,15 @@ def sonogram_agg_report(request):
 def sonogram_detail_report(request):
     return detail_report(request, 'Sonogram Fundraiser')
 
+
+def golf_agg_report(request):
+    return aggregate_report(request, '2017 Golf Classic')
+
+
+def golf_detail_report(request):
+    return detail_report(request, '2017 Golf Classic')
+
+
 def aggregate_report(request, campaign):
     order_list = Order.objects.filter(
         braintree_id__isnull=False,
