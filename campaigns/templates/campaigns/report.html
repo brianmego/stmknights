@@ -8,11 +8,21 @@
 <div class="col-md-12 text detail">
     {% for row in row_list %}
     <div class="row">
-        {% for item in row %}
-        <div class="col-md-{{ column_width }}">
-                <span class="word-wrap">{{ item|safe }} </span>
-            </div>
-        {% endfor %}
+        <div class="col-md-2">
+            <span class="word-wrap">{{ row.0 }} </span>
+        </div>
+        <div class="col-md-2">
+            <span class="word-wrap">{{ row.1 }} </span>
+        </div>
+        <div class="col-md-4">
+            <span class="word-wrap">{{ row.2 }} </span>
+        </div>
+        <div class="col-md-2">
+            <span class="word-wrap">{{ row.3 }} </span>
+        </div>
+        <div class="col-md-2">
+            <span class="word-wrap">{{ row.4|safe }} </span>
+        </div>
     </div>
     {% endfor %}
 </div>

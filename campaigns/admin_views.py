@@ -124,7 +124,7 @@ def detail_report(request, campaign):
 
     header_row = ['Name', 'Date', 'Email', 'Order', 'Extra']
     row_list = []
-    for key, value in row_dict.items():
+    for value in row_dict.values():
         row_list.append([value['name'], value['date'], value['unique_id'], value['order'], value['extra']])
 
     row_list = sorted(row_list, key=lambda x: x[0])
