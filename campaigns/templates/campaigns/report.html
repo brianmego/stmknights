@@ -10,7 +10,7 @@
     <div class="row">
         {% for item in row %}
         <div class="col-md-{{ column_width }}">
-                <span>{{ item }} </span>
+                <span class="word-wrap">{{ item|safe }} </span>
             </div>
         {% endfor %}
     </div>
