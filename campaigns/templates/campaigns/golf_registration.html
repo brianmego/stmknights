@@ -101,7 +101,7 @@
                                 <form method="POST" action="/checkout/" class="sales-form">
                                     {% csrf_token %}
 
-                                    {% for i in '1234' %}
+                                    {% for i in '12345678' %}
                                     <div class="form-group">
                                         <p>Player {{i}}</p>
                                         <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}">
@@ -203,16 +203,13 @@ function calculateTotal() {
             }
          );
 
-    if (selected_sponsorship == 'Par Sponsor') {
-        players -= 1
-    }
-    else if (selected_sponsorship == 'Birdie Sponsor') {
-        players -= 2
-    }
-    else if (selected_sponsorship == 'Eagle Sponsor') {
+    if (selected_sponsorship == 'Silver Sponsor') {
         players -= 4
     }
-    else if (selected_sponsorship == 'Tournament Sponsor') {
+    else if (selected_sponsorship == 'Gold Sponsor') {
+        players -= 8
+    }
+    else if (selected_sponsorship == 'Platinum Sponsor') {
         players -= 8
     }
     if (players < 0) {
