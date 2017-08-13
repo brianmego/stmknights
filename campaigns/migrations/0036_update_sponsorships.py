@@ -10,10 +10,6 @@ def forwards(apps, schema_editor):
     campaign = models.Campaign.objects.get(
         lookup_name='golf2017',
     )
-    models.Product.objects.filter(
-        name__contains='Sponsor',
-        campaign=campaign
-    ).delete()
     models.Product.objects.get_or_create(
         name='Platinum Sponsor',
         campaign=campaign,
