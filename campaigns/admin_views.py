@@ -1,48 +1,10 @@
 from django.shortcuts import render
-from .models import Order
+from .models import Campaign, Order
 
 
-def crawfish_boil_agg_report(request):
-    return aggregate_report(request, 'Crawfish Boil')
-
-
-def crawfish_boil_detail_report(request):
-    return detail_report(request, 'Crawfish Boil')
-
-
-def fish_fry_agg_report(request):
-    return aggregate_report(request, 'Lenten Fish Fry')
-
-
-def fish_fry_detail_report(request):
-    return detail_report(request, 'Lenten Fish Fry')
-
-
-def nut_sales_agg_report(request):
-    return aggregate_report(request, 'Nut Sales')
-
-
-def nut_sales_detail_report(request):
-    return detail_report(request, 'Nut Sales')
-
-
-def sonogram_agg_report(request):
-    return aggregate_report(request, 'Sonogram Fundraiser')
-
-
-def sonogram_detail_report(request):
-    return detail_report(request, 'Sonogram Fundraiser')
-
-
-def golf_agg_report(request):
-    return aggregate_report(request, '2017 Golf Classic')
-
-
-def golf_detail_report(request):
-    return detail_report(request, '2017 Golf Classic')
-
-
-def aggregate_report(request, campaign):
+def aggregate_report(request):
+    requested_campaign = request.path.split('/')[-1].rsplit('_')[0]
+    campaign = Campaign.objects.get(name=requested_campaign)
     order_list = Order.objects.filter(
         braintree_id__isnull=False,
         voided=False
@@ -51,7 +13,7 @@ def aggregate_report(request, campaign):
     for order in order_list:
         if order.lineitem_set.first() is None:
             continue
-        if order.lineitem_set.first().product.campaign.name == campaign:
+        if order.lineitem_set.first().product.campaign.name == campaign.name:
             campaign_order_list.append(order)
 
     row_dict = {}
@@ -78,7 +40,9 @@ def aggregate_report(request, campaign):
     return render(request, 'campaigns/report.html', substitutions)
 
 
-def detail_report(request, campaign):
+def detail_report(request):
+    requested_campaign = request.path.split('/')[-1].rsplit('_')[0]
+    campaign = Campaign.objects.get(name=requested_campaign)
     order_list = Order.objects.filter(
         braintree_id__isnull=False,
         voided=False
@@ -87,7 +51,7 @@ def detail_report(request, campaign):
     for order in order_list:
         if order.lineitem_set.first() is None:
             continue
-        if order.lineitem_set.first().product.campaign.name == campaign:
+        if order.lineitem_set.first().product.campaign.name == campaign.name:
             campaign_order_list.append(order)
 
     row_dict = {}
