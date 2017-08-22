@@ -53,5 +53,12 @@ admin.site.register(models.MerchantAccountId)
 # admin.site.register(models.LineItem)  # Don't want to delete sales history!
 
 for campaign in models.Campaign.objects.filter(closed=False):
-    admin.site.register_view('{}_aggregate'.format(campaign.name), view=admin_views.aggregate_report, name='{} Aggregrate Report'.format(campaign.name))
-    admin.site.register_view('{}_detail'.format(campaign.name), view=admin_views.detail_report, name='{} Detail Report'.format(campaign.name))
+    admin.site.register_view(
+        '{}_aggregate'.format(campaign.lookup_name),
+        view=admin_views.aggregate_report,
+        name='{} Aggregrate Report'.format(campaign.name)
+    )
+    admin.site.register_view(
+        '{}_detail'.format(campaign.lookup_name),
+        view=admin_views.detail_report,
+        name='{} Detail Report'.format(campaign.name))

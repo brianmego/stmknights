@@ -4,7 +4,7 @@ from .models import Campaign, Order
 
 def aggregate_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_')[0]
-    campaign = Campaign.objects.get(name=requested_campaign)
+    campaign = Campaign.objects.get(lookup_name=requested_campaign)
     order_list = Order.objects.filter(
         braintree_id__isnull=False,
         voided=False
@@ -42,7 +42,7 @@ def aggregate_report(request):
 
 def detail_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_')[0]
-    campaign = Campaign.objects.get(name=requested_campaign)
+    campaign = Campaign.objects.get(lookup_name=requested_campaign)
     order_list = Order.objects.filter(
         braintree_id__isnull=False,
         voided=False
