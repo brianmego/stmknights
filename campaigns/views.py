@@ -134,7 +134,8 @@ def payment_confirmation_view(request):
             'Postal Code: {}'.format(postal_code),
             'Phone: {}'.format(phone_number),
             'Amount: ${}'.format(payment_amount),
-            'Order: {}'.format(order_list)
+            'Order: {}'.format(order_list),
+            'Campaign: {}'.format(campaign.lookup_name),
         ]
         if order.extra:
             email_body.append('Extra Info: {}'.format(order.extra))
