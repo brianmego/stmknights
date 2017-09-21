@@ -8,19 +8,19 @@
 <div class="col-md-12 text detail">
     {% for row in row_list %}
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-{{ column_widths.0 }}">
             <span class="word-wrap">{{ row.0 }} </span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-{{ column_widths.1 }}">
             <span class="word-wrap">{{ row.1 }} </span>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-{{ column_widths.2 }}">
             <span class="word-wrap">{{ row.2 }} </span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-{{ column_widths.3 }}">
             <span class="word-wrap">{{ row.3 }} </span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-{{ column_widths.4 }}">
             <span class="word-wrap">{{ row.4|safe }} </span>
         </div>
     </div>

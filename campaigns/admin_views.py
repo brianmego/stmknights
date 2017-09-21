@@ -28,14 +28,15 @@ def aggregate_report(request):
             )
             row_dict[item.product.name]['count'] += item.quantity
             row_dict[item.product.name]['total'] += item.quantity * item.price_snapshot
+    header_row = ['Product', 'Count Sold', 'Total Collected']
     row_list = []
-    row_list.append(['Product', 'Count Sold', 'Total Collected'])
     for item in row_dict.items():
         row_list.append([item[0], item[1]['count'], '${}'.format(item[1]['total'])])
 
+    row_list = sorted(row_list, key=lambda x: x[0].lower())
     substitutions = {
-        'row_list': row_list,
-        'column_width': int(12 / len(row_list[0]))
+        'row_list': [header_row] + row_list,
+        'column_widths': [4, 4, 4]
     }
     return render(request, 'campaigns/report.html', substitutions)
 
@@ -79,7 +80,7 @@ def detail_report(request):
             continue
 
         row_dict[order.pk] = {
-            'name': '{} {}'.format(customer.first_name, customer.last_name),
+            'name': '{}, {}'.format(customer.last_name, customer.first_name),
             'unique_id': customer.email,
             'date': order.created_time,
             'order': order_to_display,
@@ -91,9 +92,55 @@ def detail_report(request):
     for value in row_dict.values():
         row_list.append([value['name'], value['date'], value['unique_id'], value['order'], value['extra']])
 
-    row_list = sorted(row_list, key=lambda x: x[0])
+    row_list = sorted(row_list, key=lambda x: x[0].lower())
     substitutions = {
         'row_list': [header_row] + row_list,
-        'column_width': int(12 / len(header_row))
+        'column_widths': [2, 2, 4, 2, 2]
+    }
+    return render(request, 'campaigns/report.html', substitutions)
+
+
+def customer_report(request):
+    requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
+    campaign = Campaign.objects.get(lookup_name=requested_campaign)
+    order_list = Order.objects.filter(
+        braintree_id__isnull=False,
+        voided=False
+    )
+    campaign_order_list = []
+    for order in order_list:
+        if order.lineitem_set.first() is None:
+            continue
+        if order.lineitem_set.first().product.campaign.name == campaign.name:
+            campaign_order_list.append(order)
+
+    row_dict = {}
+    for order in campaign_order_list:
+        order_to_display = []
+        total = 0
+        for line_item in order.lineitem_set.all():
+            if line_item.quantity == 0:
+                continue
+            total += line_item.quantity * line_item.price_snapshot
+
+        customer = order.customer_set.first()
+
+        row_dict[order.pk] = {
+            'name': '{}, {}'.format(customer.last_name, customer.first_name),
+            'date': order.created_time,
+            'total': total,
+        }
+
+    header_row = ['Name', 'Date', 'Total']
+    row_list = []
+
+    for value in row_dict.values():
+        row_list.append([value['name'], value['date'], value['total']])
+
+    row_list = sorted(row_list, key=lambda x: x[0].lower())
+    column_widths = [4, 4, 4]
+    substitutions = {
+        'row_list': [header_row] + row_list,
+        'column_widths': column_widths
     }
     return render(request, 'campaigns/report.html', substitutions)

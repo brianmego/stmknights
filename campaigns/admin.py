@@ -62,3 +62,7 @@ for campaign in models.Campaign.objects.filter(closed=False):
         '{}_detail'.format(campaign.lookup_name),
         view=admin_views.detail_report,
         name='{} Detail Report'.format(campaign.name))
+    admin.site.register_view(
+        '{}_customer'.format(campaign.lookup_name),
+        view=admin_views.customer_report,
+        name='{} Customer Report'.format(campaign.name))
