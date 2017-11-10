@@ -8,15 +8,21 @@
 <div class="col-md-12 container">
     {% block container_content %}
     <div class="col-md-12">
+        {% if where %}
         <p>
             <strong>Where: </strong>{{ where }}
         </p>
+        {% endif %}
+        {% if when %}
             <strong>When: </strong>{{ when }}
         </p>
+        {% endif %}
+        {% if details %}
         <p>
             <strong>Details: </strong>
             {{ details|safe }}
         </p>
+        {% endif %}
     </div>
     <div class="col-md-12">
         <form method="POST" action="/checkout/" class="sales-form">
@@ -46,6 +52,11 @@
                 <div id="product-{{ product.id }}-cost" class="col-md-1">
                     ${{ product.cost }}
                 </div>
+                {% if product.meta_field_two %}
+                <div class="col-md-4">
+                    <img src=/static/campaigns/img/{{ product.meta_field_two }} width=50%>
+                </div>
+                {% endif %}
             </div>
             <br>
             {% endfor %}
