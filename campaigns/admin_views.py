@@ -125,8 +125,12 @@ def customer_report(request):
 
         customer = order.customer_set.first()
 
+        try:
+            name = '{}, {}'.format(customer.last_name, customer.first_name)
+        except AttributeError:
+            name = 'Missing Data'
         row_dict[order.pk] = {
-            'name': '{}, {}'.format(customer.last_name, customer.first_name),
+            'name': name,
             'date': order.created_time,
             'total': total,
         }
