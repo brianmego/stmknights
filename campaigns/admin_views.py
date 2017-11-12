@@ -79,8 +79,13 @@ def detail_report(request):
             }
             continue
 
+        try:
+            name = '{}, {}'.format(customer.last_name, customer.first_name)
+        except AttributeError:
+            name = 'Missing Data'
+
         row_dict[order.pk] = {
-            'name': '{}, {}'.format(customer.last_name, customer.first_name),
+            'name': name,
             'unique_id': customer.email,
             'date': order.created_time,
             'order': order_to_display,
