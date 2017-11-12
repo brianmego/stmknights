@@ -15,7 +15,8 @@ def aggregate_report(request):
         if order.lineitem_set.first() is None:
             continue
         if order.lineitem_set.first().product.campaign.name == campaign.name:
-            campaign_order_list.append(order)
+            if order.created_time.date() >= campaign.reporting_start:
+                campaign_order_list.append(order)
 
     row_dict = {}
     for order in campaign_order_list:
@@ -54,7 +55,8 @@ def detail_report(request):
         if order.lineitem_set.first() is None:
             continue
         if order.lineitem_set.first().product.campaign.name == campaign.name:
-            campaign_order_list.append(order)
+            if order.created_time.date() >= campaign.reporting_start:
+                campaign_order_list.append(order)
 
     row_dict = {}
     for order in campaign_order_list:
