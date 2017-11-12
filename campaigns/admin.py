@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.utils import OperationalError
 from . import models, admin_views
 
 
@@ -52,7 +53,12 @@ admin.site.register(models.Customer)
 admin.site.register(models.MerchantAccountId)
 # admin.site.register(models.LineItem)  # Don't want to delete sales history!
 
-for campaign in models.Campaign.objects.filter(closed=False):
+try:
+    campaign_list = [x for x in models.Campaign.objects.filter(closed=False)]
+except OperationalError:
+    campaign_list = []
+
+for campaign in campaign_list:
     admin.site.register_view(
         '{}_aggregate'.format(campaign.lookup_name),
         view=admin_views.aggregate_report,
