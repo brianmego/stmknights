@@ -84,9 +84,14 @@ def detail_report(request):
         except AttributeError:
             name = 'Missing Data'
 
+        try:
+            unique_id = customer.email
+        except AttributeError:
+            unique_id = 'Missing Data'
+
         row_dict[order.pk] = {
             'name': name,
-            'unique_id': customer.email,
+            'unique_id': unique_id,
             'date': order.created_time,
             'order': order_to_display,
             'extra': order.extra
