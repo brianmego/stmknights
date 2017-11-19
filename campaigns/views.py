@@ -64,29 +64,36 @@ def generic_order(request, campaign, pk=None):
 
 
 def payment_confirmation_view(request):
-    if request.method == 'POST':
+    next_page = 'campaigns/sales_thankyou.html'
+
+    order = Order.objects.get(pk=request.POST['order_id'])
+    payment_amount = request.POST.get('payment-amount', 0)
+    first_name = request.POST['first-name']
+    last_name = request.POST['last-name']
+    phone_number = request.POST['phone-number']
+    street_address = request.POST['street-address']
+    postal_code = request.POST['postal-code']
+    email = request.POST['email']
+    campaign_lookup = request.POST['campaign']
+    campaign = Campaign.objects.get(lookup_name=campaign_lookup)
+    substitutions = {
+        'campaign': campaign.lookup_name
+    }
+
+    Customer.objects.create(
+        first_name=first_name,
+        last_name=last_name,
+        phone_number=phone_number,
+        email=email,
+        street_address=street_address,
+        postal_code=postal_code,
+        order=order
+    )
+
+    if not order.get_total():
+        next_page = 'campaigns/free_thankyou.html'
+    else:
         nonce = request.POST['payment-method-nonce']
-        order = Order.objects.get(pk=request.POST['order_id'])
-        first_name = request.POST['first-name']
-        last_name = request.POST['last-name']
-        phone_number = request.POST['phone-number']
-        street_address = request.POST['street-address']
-        postal_code = request.POST['postal-code']
-        email = request.POST['email']
-        campaign_lookup = request.POST['campaign']
-        payment_amount = request.POST['payment-amount']
-        campaign = Campaign.objects.get(lookup_name=campaign_lookup)
-
-        Customer.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            phone_number=phone_number,
-            email=email,
-            street_address=street_address,
-            postal_code=postal_code,
-            order=order
-        )
-
         transaction_sale_body = {
             "amount": payment_amount,
             "customer": {
@@ -110,10 +117,6 @@ def payment_confirmation_view(request):
             transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
 
         result = braintree.Transaction.sale(transaction_sale_body)
-        substitutions = {
-            'result': result
-        }
-
         if not result.is_success:
             substitutions = {
                 'header': 'Checkout',
@@ -122,36 +125,36 @@ def payment_confirmation_view(request):
                 'error_message': result.message
             }
             return render(request, 'campaigns/checkout.html', substitutions)
-        substitutions['campaign'] = campaign.lookup_name
 
+        substitutions['result'] = result
         order.braintree_id = result.transaction.id
         order.save()
 
-        order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
-        email_body = [
-            'Name: {} {}'.format(first_name, last_name),
-            'Address: {}'.format(street_address),
-            'Postal Code: {}'.format(postal_code),
-            'Phone: {}'.format(phone_number),
-            'Amount: ${}'.format(payment_amount),
-            'Order: {}'.format(order_list),
-            'Campaign: {}'.format(campaign.lookup_name),
-        ]
-        if order.extra:
-            email_body.append('Extra Info: {}'.format(order.extra))
+    order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
+    email_body = [
+        'Name: {} {}'.format(first_name, last_name),
+        'Address: {}'.format(street_address),
+        'Postal Code: {}'.format(postal_code),
+        'Phone: {}'.format(phone_number),
+        'Amount: ${}'.format(payment_amount),
+        'Order: {}'.format(order_list),
+        'Campaign: {}'.format(campaign.lookup_name),
+    ]
+    if order.extra:
+        email_body.append('Extra Info: {}'.format(order.extra))
 
-        email_addrs = list(campaign.contact.all().values_list('email', flat=True))
-        email_addrs.append(request.POST['email'])
+    email_addrs = list(campaign.contact.all().values_list('email', flat=True))
+    email_addrs.append(request.POST['email'])
 
-        msg = EmailMultiAlternatives(
-                'STM Knights Website Order Confirmation',
-                ''.join(email_body),
-                'noreply@STMKnights.org',
-                set(email_addrs),
-        )
-        msg.attach_alternative('<br>'.join(email_body), "text/html")
-        msg.send()
-        return render(request, 'campaigns/sales_thankyou.html', substitutions)
+    msg = EmailMultiAlternatives(
+            'STM Knights Website Order Confirmation',
+            ''.join(email_body),
+            'noreply@STMKnights.org',
+            set(email_addrs),
+    )
+    msg.attach_alternative('<br>'.join(email_body), "text/html")
+    msg.send()
+    return render(request, next_page, substitutions)
 
 
 def checkout_view(request):
