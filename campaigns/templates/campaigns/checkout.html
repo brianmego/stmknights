@@ -106,6 +106,7 @@
     </div>
 
 
+    {% if order.get_total %}
     <!-- Load the Client component. -->
     <script src="https://js.braintreegateway.com/web/3.5.0/js/client.min.js"></script>
 
@@ -184,5 +185,6 @@
     $('.hosted-field').height('50')
 
     </script>
+    {% endif %}
 
 {% endblock %}

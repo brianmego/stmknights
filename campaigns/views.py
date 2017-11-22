@@ -198,8 +198,9 @@ def checkout_view(request):
             'header': 'Checkout',
             'order': order,
             'campaign': campaign,
-            'nonce': braintree.ClientToken.generate()
         }
+        if order.get_total():
+            substitutions['nonce'] = braintree.ClientToken.generate()
         return render(request, 'campaigns/checkout.html', substitutions)
 
 
