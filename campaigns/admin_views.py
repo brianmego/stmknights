@@ -6,10 +6,13 @@ from .models import Campaign, Order
 def aggregate_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.filter(
-        braintree_id__isnull=False,
-        voided=False
-    )
+    order_list = Order.objects.all()
+    if sum([x.cost for x in campaign.product_set.all()]) > 0:
+        order_list = order_list.filter(
+            braintree_id__isnull=False,
+            voided=False
+        )
+
     campaign_order_list = []
     for order in order_list:
         if order.lineitem_set.first() is None:
@@ -46,10 +49,12 @@ def aggregate_report(request):
 def detail_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.filter(
-        braintree_id__isnull=False,
-        voided=False
-    )
+    order_list = Order.objects.all()
+    if sum([x.cost for x in campaign.product_set.all()]) > 0:
+        order_list = order_list.filter(
+            braintree_id__isnull=False,
+            voided=False
+        )
     campaign_order_list = []
     for order in order_list:
         if order.lineitem_set.first() is None:
@@ -116,10 +121,12 @@ def detail_report(request):
 def customer_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.filter(
-        braintree_id__isnull=False,
-        voided=False
-    )
+    order_list = Order.objects.all()
+    if sum([x.cost for x in campaign.product_set.all()]) > 0:
+        order_list = order_list.filter(
+            braintree_id__isnull=False,
+            voided=False
+        )
     campaign_order_list = []
     for order in order_list:
         if order.lineitem_set.first() is None:
