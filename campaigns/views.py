@@ -186,10 +186,13 @@ def checkout_view(request):
                 price_snapshot=product.cost
             )
 
+        extra = []
         for name, value in campaign_tags.items():
             pk = name.split('tag-')[1]
             tag = CampaignTag.objects.get(pk=pk)
-            order.extra = '{}:{}'.format(tag.key, value)
+            extra.append('{}:{}'.format(tag.key, value))
+        if extra:
+            order.extra = '<br>'.join(extra)
             order.save()
 
         campaign_specific_checkout(campaign, request, order)
