@@ -101,7 +101,16 @@
                                 <form method="POST" action="/checkout/" class="sales-form">
                                     {% csrf_token %}
 
-                                    {% for i in '12345678' %}
+                                    {% for i in '1234' %}
+                                    <div class="form-group">
+                                        <p>Player {{i}}</p>
+                                        <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}">
+                                    </div>
+                                    {% endfor %}
+                                    <div class="form-group">
+                                        <p>Second team (Gold or Platinum sponsors)</p>
+                                    </div>
+                                    {% for i in '5678' %}
                                     <div class="form-group">
                                         <p>Player {{i}}</p>
                                         <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}">
