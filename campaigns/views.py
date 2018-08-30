@@ -209,28 +209,26 @@ def checkout_view(request):
 
 def campaign_specific_checkout(campaign, request, order):
     product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
-    campaign_lookup_name = 'golf2017'
-    if campaign == campaign_lookup_name:
-        player_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Player')
+    campaign_lookup_name = 'golf20'
+    if campaign.startswith(campaign_lookup_name):
+        player_product = Product.objects.get(campaign__lookup_name=campaign, name='Player')
         players = int(product_inputs.get('product-{}'.format(player_product.pk)))
         sponsorship = product_inputs.get('product-sponsorship')
         donation = request.POST['donation']
         players_to_charge = players
         if sponsorship:
             sponsorship_name = Product.objects.get(pk=sponsorship.split('-')[1]).name
-            if sponsorship_name == 'Par Sponsor':
-                players_to_charge -= 1
-            elif sponsorship_name == 'Birdie Sponsor':
-                players_to_charge -= 2
-            elif sponsorship_name == 'Eagle Sponsor':
+            if sponsorship_name == 'Silver Sponsor':
                 players_to_charge -= 4
-            elif sponsorship_name == 'Tournament Sponsor':
+            elif sponsorship_name == 'Gold Sponsor':
+                players_to_charge -= 8
+            elif sponsorship_name == 'Platinum Sponsor':
                 players_to_charge -= 8
             if players_to_charge < 0:
                 players_to_charge = 0
         discounts = players - players_to_charge
         if discounts > 0:
-            discount_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Complementary Player')
+            discount_product = Product.objects.get(campaign__lookup_name=campaign, name='Complementary Player')
             LineItem.objects.create(
                 product=discount_product,
                 order=order,
@@ -245,7 +243,7 @@ def campaign_specific_checkout(campaign, request, order):
             pass
 
         if is_donation:
-            donation_product = Product.objects.get(campaign__lookup_name=campaign_lookup_name, name='Donation')
+            donation_product = Product.objects.get(campaign__lookup_name=campaign, name='Donation')
             donation_amt = int(float(donation))
             LineItem.objects.create(
                 product=donation_product,
