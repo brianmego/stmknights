@@ -254,7 +254,7 @@ def campaign_specific_checkout(campaign, request, order):
 
         player_names = request.POST.getlist('player')
         extra_text = 'Player Names: {}'.format(', '.join(player_names))
-        order.extra = extra_text
+        order.extra = '{} - {}'.format(extra_text, order.extra)
         order.save()
 
 

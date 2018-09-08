@@ -140,7 +140,21 @@
                                             <p id="total">$0</p>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn">Sign me up!</button>
+
+                                    <div class="row">
+                                        {% for tag in tags %}
+                                        <div class="form-group col-md-6">
+                                            <label for="tag-{{ tag.id }}">{{ tag.key|safe }}</label>
+                                            <textarea class='form-control' rows='5' id='tag-{{ tag.id }}' name='tag-{{ tag.id }}' placeholder='{{ tag.value }}'></textarea>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn">Sign me up!</button>
+                                        </div>
+                                    </div>
 
                                     {% for product in products %}
                                     {% if product.meta_field_one == "player" %}
