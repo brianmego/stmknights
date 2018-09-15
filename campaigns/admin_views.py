@@ -3,15 +3,21 @@ import datetime
 from .models import Campaign, Order
 
 
+def get_filtered_order_list(campaign):
+    order_list = Order.objects.all()
+    if sum([x.cost for x in campaign.product_set.all()]) > 0:
+        order_list = order_list.exclude(
+            voided=True
+        ).exclude(
+            braintree_id__isnull=True,
+            deferred=False,
+        )
+    return order_list
+
 def aggregate_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.all()
-    if sum([x.cost for x in campaign.product_set.all()]) > 0:
-        order_list = order_list.filter(
-            braintree_id__isnull=False,
-            voided=False
-        )
+    order_list = get_filtered_order_list(campaign)
 
     campaign_order_list = []
     for order in order_list:
@@ -49,12 +55,7 @@ def aggregate_report(request):
 def detail_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.all()
-    if sum([x.cost for x in campaign.product_set.all()]) > 0:
-        order_list = order_list.filter(
-            braintree_id__isnull=False,
-            voided=False
-        )
+    order_list = get_filtered_order_list(campaign)
     campaign_order_list = []
     for order in order_list:
         if order.lineitem_set.first() is None:
@@ -102,18 +103,20 @@ def detail_report(request):
             'unique_id': unique_id,
             'date': order.created_time,
             'order': order_to_display,
-            'extra': order.extra
+            'deferred': order.deferred,
+            'extra': order.extra,
         }
 
-    header_row = ['Name', 'Date', 'Email', 'Order', 'Extra']
+    header_row = ['Name', 'Date', 'Email', 'Order', 'Deferred', 'Extra']
     row_list = []
     for value in row_dict.values():
-        row_list.append([value['name'], value['date'], value['unique_id'], value['order'], value.get('extra')])
+        row_list.append([value['name'], value['date'].strftime('%D'), value['unique_id'], value['order'], value.get('deferred'), value.get('extra')])
 
     row_list = sorted(row_list, key=lambda x: x[0].lower())
     substitutions = {
+        'header': '{} Detail Report'.format(campaign.name),
         'row_list': [header_row] + row_list,
-        'column_widths': [2, 2, 4, 2, 2]
+        'column_widths': [2, 1, 4, 2, 1, 2]
     }
     return render(request, 'campaigns/report.html', substitutions)
 
@@ -121,12 +124,7 @@ def detail_report(request):
 def customer_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = Order.objects.all()
-    if sum([x.cost for x in campaign.product_set.all()]) > 0:
-        order_list = order_list.filter(
-            braintree_id__isnull=False,
-            voided=False
-        )
+    order_list = get_filtered_order_list(campaign)
     campaign_order_list = []
     for order in order_list:
         if order.lineitem_set.first() is None:

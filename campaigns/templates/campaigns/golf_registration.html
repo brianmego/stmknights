@@ -104,7 +104,7 @@
                                     {% for i in '1234' %}
                                     <div class="form-group">
                                         <p>Player {{i}}</p>
-                                        <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}">
+                                        <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}" />
                                     </div>
                                     {% endfor %}
                                     <div class="form-group">
@@ -113,14 +113,14 @@
                                     {% for i in '5678' %}
                                     <div class="form-group">
                                         <p>Player {{i}}</p>
-                                        <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}">
+                                        <input type="text" name="player" placeholder="Name..." class="player form-control" id="player-{{i}}" />
                                     </div>
                                     {% endfor %}
-                                    <input type="radio" name="product-sponsorship" value="" checked> Default Registration<br>
+                                    <input type="radio" name="product-sponsorship" value="" checked /> Default Registration<br>
 
                                     {% for product in products %}
                                     {% if product.meta_field_one == "sponsor-level" %}
-                                        <input type="radio" class='product-input' name="product-sponsorship" id="product-{{ product.id }}" value="product-{{ product.id }}"> {{ product.name }}<br>
+                                        <input type="radio" class='product-input' name="product-sponsorship" id="product-{{ product.id }}" value="product-{{ product.id }}" /> {{ product.name }}<br>
                                     {% endif %}
                                     {% endfor %}
 
@@ -129,7 +129,7 @@
                                             <strong>Donation $</strong>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="number" min="0" name="donation" class="form-control" placeholder="0" id="donation">
+                                            <input type="number" min="0" name="donation" class="form-control" placeholder="0" id="donation" />
                                         </div>
                                     </div>
                                     <div class="row">
@@ -148,6 +148,10 @@
                                             <textarea class='form-control' rows='5' id='tag-{{ tag.id }}' name='tag-{{ tag.id }}' placeholder='{{ tag.value }}'></textarea>
                                         </div>
                                         {% endfor %}
+                                    </div>
+
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="deferred">Pay the day of the tournament</label>
                                     </div>
 
                                     <div class="row">

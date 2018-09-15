@@ -21,12 +21,20 @@
                             </strong>
                         </div>
                     </div>
-                    <br>
                 {% endif %}
             {% endfor %}
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>
+                        Total: ${{ order.get_total }}
+                    </strong>
+                </div>
+            </div>
+            <br>
+
             <input type='hidden' name="order_id" value="{{ order.id }}" />
 
-            {% if order.get_total %}
+            {% if order.get_total and nonce %}
             <div class='col-md-12'>
                 <label class='col-md-6' for="first-name">Cardholder First Name</label>
                 <input type='text' class='col-md-6' id="first-name" name="first-name" required />

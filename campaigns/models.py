@@ -111,6 +111,7 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
+    deferred = models.BooleanField(default=False)
     braintree_id = models.CharField(max_length=25, null=True, blank=True)
     voided = models.BooleanField(default=False)
     claimed = models.BooleanField(default=False)

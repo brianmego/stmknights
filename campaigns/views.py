@@ -90,7 +90,7 @@ def payment_confirmation_view(request):
         order=order
     )
 
-    if not order.get_total():
+    if not order.get_total() or order.deferred:
         next_page = 'campaigns/free_thankyou.html'
     else:
         nonce = request.POST['payment-method-nonce']
@@ -202,7 +202,12 @@ def checkout_view(request):
             'order': order,
             'campaign': campaign,
         }
-        if order.get_total():
+
+        deferred_payment = request.POST.get('deferred')
+        if deferred_payment:
+            order.deferred = True
+            order.save()
+        if order.get_total() and not deferred_payment:
             substitutions['nonce'] = braintree.ClientToken.generate()
         return render(request, 'campaigns/checkout.html', substitutions)
 
