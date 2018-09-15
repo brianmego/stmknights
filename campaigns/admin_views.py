@@ -110,7 +110,7 @@ def detail_report(request):
     header_row = ['Name', 'Date', 'Email', 'Order', 'Deferred', 'Extra']
     row_list = []
     for value in row_dict.values():
-        row_list.append([value['name'], value['date'].strftime('%D'), value['unique_id'], value['order'], value.get('deferred'), value.get('extra')])
+        row_list.append([value['name'], value['date'].strftime('%m/%d/%y'), value['unique_id'], value['order'], value.get('deferred'), value.get('extra')])
 
     row_list = sorted(row_list, key=lambda x: x[0].lower())
     substitutions = {
