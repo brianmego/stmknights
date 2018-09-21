@@ -84,7 +84,9 @@ def detail_report(request):
                 'name': 'N/A',
                 'unique_id': order.pk,
                 'date': 'N/A',
-                'order': order_to_display
+                'order': order_to_display,
+                'deferred': order.deferred,
+                'extra': order.extra,
             }
             continue
 
@@ -110,7 +112,11 @@ def detail_report(request):
     header_row = ['Name', 'Date', 'Email', 'Order', 'Deferred', 'Extra']
     row_list = []
     for value in row_dict.values():
-        row_list.append([value['name'], value['date'].strftime('%m/%d/%y'), value['unique_id'], value['order'], value.get('deferred'), value.get('extra')])
+        try:
+            date_str = value['date'].strftime('%m/%d/%y')
+        except AttributeError:
+            date_str = 'N/A'
+        row_list.append([value['name'], date_str, value['unique_id'], value['order'], value.get('deferred'), value.get('extra')])
 
     row_list = sorted(row_list, key=lambda x: x[0].lower())
     substitutions = {
