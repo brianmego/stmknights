@@ -12,6 +12,11 @@ braintree.Configuration.configure(
     private_key=settings.BRAINTREE_PRIVATE_KEY
 )
 
+
+def redirect_to_official(request):
+    return redirect('https://kofcknights.org/CouncilSite/index.asp?CNO=9997')
+
+
 def generic_order(request, campaign, pk=None):
     campaign_obj = Campaign.objects.get(lookup_name=campaign)
 
