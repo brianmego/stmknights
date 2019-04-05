@@ -1,7 +1,21 @@
 from django.shortcuts import render
+from django.db import connection
 import datetime
 from .models import Campaign, Order
 
+AGGREGATE_SQL = """
+    SELECT product.name,
+           sum(quantity) as sold,
+           sum(price_snapshot * quantity) as total
+    FROM   campaigns_product product
+      JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
+      JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
+      JOIN campaigns_order ord on lineitem.order_id = ord.id
+    WHERE campaign.lookup_name = %s
+      AND ord.voided = FALSE
+      AND ord.created_time >= campaign.reporting_start
+    GROUP BY product.name
+"""
 
 def get_filtered_order_list(campaign):
     order_list = Order.objects.all()
@@ -16,37 +30,16 @@ def get_filtered_order_list(campaign):
 
 def aggregate_report(request):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
-    campaign = Campaign.objects.get(lookup_name=requested_campaign)
-    order_list = get_filtered_order_list(campaign)
+    with connection.cursor() as cursor:
+        cursor.execute(AGGREGATE_SQL, [requested_campaign])
+        row_list = cursor.fetchall()
 
-    campaign_order_list = []
-    for order in order_list:
-        if order.lineitem_set.first() is None:
-            continue
-        if order.lineitem_set.first().product.campaign.name == campaign.name:
-            if order.created_time.date() >= campaign.reporting_start:
-                campaign_order_list.append(order)
-
-    row_dict = {}
-    for order in campaign_order_list:
-        for item in order.lineitem_set.all():
-            row_dict.setdefault(
-                item.product.name,
-                {
-                    'count': 0,
-                    'total': 0,
-                }
-            )
-            row_dict[item.product.name]['count'] += item.quantity
-            row_dict[item.product.name]['total'] += item.quantity * item.price_snapshot
-    header_row = ['Product', 'Count Sold', 'Total Collected']
-    row_list = []
-    for item in row_dict.items():
-        row_list.append([item[0], item[1]['count'], '${}'.format(item[1]['total'])])
-
-    row_list = sorted(row_list, key=lambda x: x[0].lower())
+    formatted_rows = []
+    formatted_rows.append(['Product', 'Count Sold', 'Total Collected'])  # Header row
+    for row in row_list:
+        formatted_rows.append([row[0], row[1], row[2]])
     substitutions = {
-        'row_list': [header_row] + row_list,
+        'row_list': formatted_rows, 
         'column_widths': [4, 4, 4]
     }
     return render(request, 'campaigns/report.html', substitutions)
