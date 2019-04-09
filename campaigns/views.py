@@ -219,8 +219,8 @@ def checkout_view(request):
 
 def campaign_specific_checkout(campaign, request, order):
     product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
-    campaign_lookup_name = 'golf20'
-    if campaign.startswith(campaign_lookup_name):
+    campaign_lookup_name = 'golf'
+    if campaign == campaign_lookup_name:
         player_product = Product.objects.get(campaign__lookup_name=campaign, name='Player')
         players = int(product_inputs.get('product-{}'.format(player_product.pk)))
         sponsorship = product_inputs.get('product-sponsorship')

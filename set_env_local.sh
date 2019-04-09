@@ -6,7 +6,6 @@ unset DB_NAME
 unset DB_USER
 unset DB_PASSWORD
 unset DEBUG
-export ALLOWED_HOSTS='' 
 export SECRET_KEY='foo' 
 export DEBUG='true' 
 
