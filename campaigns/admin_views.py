@@ -12,7 +12,7 @@ AGGREGATE_SQL = """
       JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
       JOIN campaigns_order ord on lineitem.order_id = ord.id
     WHERE campaign.lookup_name = %s
-      AND ord.braintree_id is not NULL
+      AND (ord.braintree_id is not NULL OR ord.deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
     GROUP BY product.name
@@ -26,7 +26,7 @@ CUSTOMER_SQL = """
       JOIN campaigns_order ord on lineitem.order_id = ord.id
       JOIN campaigns_customer cust on ord.id = cust.order_id
     WHERE campaign.lookup_name = %s
-      AND ord.braintree_id is not NULL
+      AND (ord.braintree_id is not NULL OR ord.deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
 """
@@ -46,7 +46,7 @@ DETAIL_SQL = """
       JOIN campaigns_order ord on lineitem.order_id = ord.id
       JOIN campaigns_customer cust on ord.id = cust.order_id
     WHERE campaign.lookup_name = %s
-      AND ord.braintree_id is not NULL
+      AND (ord.braintree_id is not NULL OR ord.deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
 """
