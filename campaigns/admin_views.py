@@ -29,26 +29,30 @@ CUSTOMER_SQL = """
       AND (ord.braintree_id is not NULL OR ord.deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
+    GROUP BY cust.id
 """
 
 DETAIL_SQL = """
     SELECT cust.first_name,
            cust.last_name,
+           ord.id,
            ord.created_time,
            cust.email,
            product.name,
            lineitem.quantity,
            ord.deferred,
            ord.extra
-    FROM   campaigns_product product
-      JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
-      JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
-      JOIN campaigns_order ord on lineitem.order_id = ord.id
-      JOIN campaigns_customer cust on ord.id = cust.order_id
-    WHERE campaign.lookup_name = %s
-      AND (ord.braintree_id is not NULL OR ord.deferred = 1)
+    FROM campaigns_product product
+           JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
+           JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
+           JOIN campaigns_order ord on lineitem.order_id = ord.id
+           JOIN campaigns_customer cust on ord.id = cust.order_id
+    WHERE campaign.lookup_name = 'golf'
+      and (ord.braintree_id is not NULL or deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
+      AND lineitem.quantity > 0
+    ORDER BY cust.order_id
 """
 
 def get_filtered_order_list(campaign):
