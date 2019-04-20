@@ -35,7 +35,6 @@ CUSTOMER_SQL = """
 DETAIL_SQL = """
     SELECT cust.first_name,
            cust.last_name,
-           ord.id,
            ord.created_time,
            cust.email,
            product.name,
@@ -47,7 +46,7 @@ DETAIL_SQL = """
            JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
            JOIN campaigns_order ord on lineitem.order_id = ord.id
            JOIN campaigns_customer cust on ord.id = cust.order_id
-    WHERE campaign.lookup_name = 'golf'
+    WHERE campaign.lookup_name = %s
       and (ord.braintree_id is not NULL or deferred = 1)
       AND ord.voided = FALSE
       AND ord.created_time >= campaign.reporting_start
