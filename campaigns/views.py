@@ -14,7 +14,7 @@ braintree.Configuration.configure(
 
 
 def redirect_to_official(request):
-    return redirect('https://kofcknights.org/CouncilSite/index.asp?CNO=9997')
+    return redirect('https://uknight.org/CouncilSite/?CNO=9997')
 
 
 def generic_order(request, campaign, pk=None):
