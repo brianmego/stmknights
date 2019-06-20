@@ -2,7 +2,7 @@
 
 {% block container_content %}
 
-    <form id="checkout-form" action="/payment_confirmation/" method="post">
+    <form id="checkout-form" action="/payment_confirmation/" method="post" onsubmit="return validateForm();">
         {% csrf_token %}
         <div class='error' id="error-message">{{ error_message }}</div>
         <div class='col-md-12'>
@@ -33,8 +33,7 @@
             <br>
 
             <input type='hidden' name="order_id" value="{{ order.id }}" />
-
-            {% if order.get_total and nonce %}
+            {% if order.get_total %}
             <div class='col-md-12'>
                 <label class='col-md-6' for="first-name">Cardholder First Name</label>
                 <input type='text' class='col-md-6' id="first-name" name="first-name" required />
@@ -61,20 +60,22 @@
             </div>
             <div class='col-md-12'>
                 <label class='col-md-6' for="card-number">Card Number</label>
-                <div class="col-md-6 hosted-field" id="card-number"></div>
+                <iframe id="tokenFrame" class='col-md-6' height=36 name="tokenFrame" frameborder="0" scrolling="no"/></iframe>
+            </div>
+            <div id="cardNumberValidationError" class="error"></div>
+            <div class='col-md-12'>
+                <label class='col-md-6' for="expiration-date">Expiration Date</label>
+                <input class="col-md-6" type='text' id="expiration-date" maxLength=4></input>
+                <div id="expDateValidationError" class="error"></div>
             </div>
             <div class='col-md-12'>
                 <label class='col-md-6' for="cvv">CVV</label>
-                <div class="col-md-6 hosted-field" id="cvv"></div>
-            </div>
-            <div class='col-md-12'>
-                <label class='col-md-6' for="expiration-date">Expiration Date</label>
-                <div class="col-md-6 hosted-field" id="expiration-date"></div>
+                <input class="col-md-6" type='text' id="cvv" maxLength=4></input>
+                <div id="cvvValidationError" class="error"></div>
             </div>
 
-            <input type="hidden" name="payment-method-nonce">
             <input type="hidden" name="payment-amount">
-            <input type="submit" value="Pay ${{ order.get_total }}" disabled>
+            <input type="submit" id='submit' value="Pay ${{ order.get_total }}" disabled>
             {% else %}
 
             <div class='col-md-12'>
@@ -102,10 +103,10 @@
                 <input type='text' class='col-md-6' id="email" name="email" required />
             </div>
 
-            <input type="submit" value="Submit">
+            <input type="submit" id='submit' value="Submit">
             {% endif %}
-
             <input type='hidden' name="campaign" value="{{ campaign }}" />
+            <input type='hidden' name="token" id="token" />
         </div>
     </form>
 
@@ -115,84 +116,58 @@
 
 
     {% if order.get_total %}
-    <!-- Load the Client component. -->
-    <script src="https://js.braintreegateway.com/web/3.5.0/js/client.min.js"></script>
 
-    <!-- Load the Hosted Fields component. -->
-    <script src="https://js.braintreegateway.com/web/3.5.0/js/hosted-fields.min.js"></script>
+    <script language='JavaScript'>
+         var tokenError = '';
 
-    <script>
-    var submit = document.querySelector('input[type="submit"]');
-    var form = document.querySelector('#checkout-form');
-
-    braintree.client.create({
-      // Replace this with your own authorization.
-        authorization: '{{ nonce }}'
-    }, function (clientErr, clientInstance) {
-      if (clientErr) {
-        // Handle error in client creation
-        return;
-      }
-
-      braintree.hostedFields.create({
-        client: clientInstance,
-        styles: {
-          'input': {
-            'font-size': '14pt',
-          },
-          'input.invalid': {
-            'color': 'red'
-          },
-          'input.valid': {
-            'color': 'green'
-          }
-        },
-        fields: {
-          number: {
-            selector: '#card-number',
-          },
-          cvv: {
-            selector: '#cvv',
-          },
-          expirationDate: {
-            selector: '#expiration-date',
-          }
-        }
-      }, function (hostedFieldsErr, hostedFieldsInstance) {
-        if (hostedFieldsErr) {
-          // Handle error in Hosted Fields creation
-          return;
+        function loadIframe() {
+            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com/itoke/ajax-tokenizer.html?css=.error{color:red;border-color:red;};input{margin:0;}&invalidinputevent=true";
         }
 
-        submit.removeAttribute('disabled');
+        function validateForm() {
+            var valid = true;
 
-        form.addEventListener('submit', function (event) {
-          event.preventDefault();
-
-          hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
-            if (tokenizeErr) {
-              $('#error-message').text(tokenizeErr.message);
-              return;
+            if (tokenError !== undefined) {
+                document.getElementById("cardNumberValidationError").innerHTML = "* " + tokenError;
+                valid = false;
+            } else if (document.getElementById('token').value === '') {
+                document.getElementById("cardNumberValidationError").innerHTML = "* Card number is required";
+                valid = false;
             }
 
-            submit.setAttribute('disabled', true);
-            // Put `payload.nonce` into the `payment-method-nonce` input, and then
-            // submit the form. Alternatively, you could send the nonce to your server
-            // with AJAX.
-            document.querySelector('input[name="payment-method-nonce"]').value = payload.nonce;
-            document.querySelector('input[name="payment-amount"]').value = {{ order.get_total }};
-            form.submit();
-          });
+            if (document.getElementById('expDateInput').value === '') {
+                document.getElementById("expDateValidationError").innerHTML = "* Expiration date is required";
+                valid = false;
+            }
+
+            if (document.getElementById('cvvInput').value === '') {
+                document.getElementById("cvvValidationError").innerHTML = "* CVV is required";
+                valid = false;
+            }
+
+            if (valid) {
+                alert("Token value: " + document.getElementById('token').value);
+            }
+            return false;
+        }
+
+        window.addEventListener('message', function(event) {
+            //console.log("received message: " + event.data);
+            var token = JSON.parse(event.data);
+            if (token.validationError === undefined) {
+                document.getElementById("cardNumberValidationError").innerHTML = '';
+                document.getElementById('submit').removeAttribute('disabled');
+            } else {
+                document.getElementById("cardNumberValidationError").innerHTML = token.validationError;
+                document.getElementById('submit').disabled = true;
+            }
+            tokenError = token.validationError;
+            document.getElementById('token').value = token.message;
         }, false);
-      });
 
-    $('iframe').css('border', '1px solid lightgrey')
-
-    });
-
-    $('.hosted-field').height('50')
-
+        loadIframe();
     </script>
+
     {% endif %}
 
 {% endblock %}

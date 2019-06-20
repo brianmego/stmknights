@@ -30,6 +30,8 @@ else:
     BASE_DIR = '/var/www/html/stmknights'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 

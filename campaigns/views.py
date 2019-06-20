@@ -1,16 +1,16 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
-import braintree
+# import braintree
 from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
 
 
-braintree.Configuration.configure(
-    braintree.Environment.All[settings.BRAINTREE_ENVIRONMENT],
-    merchant_id=settings.BRAINTREE_MERCHANT_ID,
-    public_key=settings.BRAINTREE_PUBLIC_KEY,
-    private_key=settings.BRAINTREE_PRIVATE_KEY
-)
+# braintree.Configuration.configure(
+#     braintree.Environment.All[settings.BRAINTREE_ENVIRONMENT],
+#     merchant_id=settings.BRAINTREE_MERCHANT_ID,
+#     public_key=settings.BRAINTREE_PUBLIC_KEY,
+#     private_key=settings.BRAINTREE_PRIVATE_KEY
+# )
 
 
 def redirect_to_official(request):
@@ -72,6 +72,7 @@ def payment_confirmation_view(request):
     next_page = 'campaigns/sales_thankyou.html'
 
     order = Order.objects.get(pk=request.POST['order_id'])
+    # token = request.POST['token']
     payment_amount = request.POST.get('payment-amount', 0)
     first_name = request.POST['first-name']
     last_name = request.POST['last-name']
@@ -97,43 +98,43 @@ def payment_confirmation_view(request):
 
     if not order.get_total() or order.deferred:
         next_page = 'campaigns/free_thankyou.html'
-    else:
-        nonce = request.POST['payment-method-nonce']
-        transaction_sale_body = {
-            "amount": payment_amount,
-            "customer": {
-                "first_name": first_name,
-                "last_name": last_name,
-                "phone": phone_number,
-                "email": email
-            },
-            "billing": {
-                "first_name": first_name,
-                "last_name": last_name,
-                "street_address": street_address,
-                "postal_code": postal_code,
-            },
-            "payment_method_nonce": nonce,
-            "options": {
-                "submit_for_settlement": True
-            }
-        }
-        if campaign.merchant_account_id:
-            transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
+    # else:
+        # nonce = request.POST['payment-method-nonce']
+        # transaction_sale_body = {
+        #     "amount": payment_amount,
+        #     "customer": {
+        #         "first_name": first_name,
+        #         "last_name": last_name,
+        #         "phone": phone_number,
+        #         "email": email
+        #     },
+        #     "billing": {
+        #         "first_name": first_name,
+        #         "last_name": last_name,
+        #         "street_address": street_address,
+        #         "postal_code": postal_code,
+        #     },
+        #     # "payment_method_nonce": nonce,
+        #     "options": {
+        #         "submit_for_settlement": True
+        #     }
+        # }
+        # if campaign.merchant_account_id:
+        #     transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
 
-        result = braintree.Transaction.sale(transaction_sale_body)
-        if not result.is_success:
-            substitutions = {
-                'header': 'Checkout',
-                'order': order,
-                'nonce': braintree.ClientToken.generate(),
-                'error_message': result.message
-            }
-            return render(request, 'campaigns/checkout.html', substitutions)
+        # result = braintree.Transaction.sale(transaction_sale_body)
+        # if not result.is_success:
+        #     substitutions = {
+        #         'header': 'Checkout',
+        #         'order': order,
+        #         # 'nonce': braintree.ClientToken.generate(),
+        #         'error_message': result.message
+        #     }
+        #     return render(request, 'campaigns/checkout.html', substitutions)
 
-        substitutions['result'] = result
-        order.braintree_id = result.transaction.id
-        order.save()
+        # substitutions['result'] = result
+        # order.braintree_id = result.transaction.id
+        # order.save()
 
     order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
     email_body = [
@@ -212,8 +213,8 @@ def checkout_view(request):
         if deferred_payment:
             order.deferred = True
             order.save()
-        if order.get_total() and not deferred_payment:
-            substitutions['nonce'] = braintree.ClientToken.generate()
+        # if order.get_total() and not deferred_payment:
+        #     substitutions['nonce'] = braintree.ClientToken.generate()
         return render(request, 'campaigns/checkout.html', substitutions)
 
 
