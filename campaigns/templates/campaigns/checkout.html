@@ -65,16 +65,16 @@
             <div id="cardNumberValidationError" class="error"></div>
             <div class='col-md-12'>
                 <label class='col-md-6' for="expiration-date">Expiration Date</label>
-                <input class="col-md-6" type='text' id="expiration-date" maxLength=4></input>
+                <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=4></input>
                 <div id="expDateValidationError" class="error"></div>
             </div>
             <div class='col-md-12'>
                 <label class='col-md-6' for="cvv">CVV</label>
-                <input class="col-md-6" type='text' id="cvv" maxLength=4></input>
+                <input class="col-md-6" type='text' name="cvv" id="cvv" maxLength=4></input>
                 <div id="cvvValidationError" class="error"></div>
             </div>
 
-            <input type="hidden" name="payment-amount">
+            <input type="hidden" name="payment-amount" value="{{ order.get_total }}">
             <input type="submit" id='submit' value="Pay ${{ order.get_total }}" disabled>
             {% else %}
 
@@ -121,7 +121,7 @@
          var tokenError = '';
 
         function loadIframe() {
-            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com/itoke/ajax-tokenizer.html?css=.error{color:red;border-color:red;};input{margin:0;}&invalidinputevent=true";
+            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com:6443/itoke/ajax-tokenizer.html?css=.error{color:red;border-color:red;};input{margin:0;}&invalidinputevent=true";
         }
 
         function validateForm() {

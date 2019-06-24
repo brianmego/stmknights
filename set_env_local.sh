@@ -8,4 +8,3 @@ unset DB_PASSWORD
 unset DEBUG
 export SECRET_KEY='foo' 
 export DEBUG='true' 
-

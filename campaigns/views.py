@@ -1,16 +1,18 @@
+import base64
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
-# import braintree
 from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
+import requests
+import logging
 
-
-# braintree.Configuration.configure(
-#     braintree.Environment.All[settings.BRAINTREE_ENVIRONMENT],
-#     merchant_id=settings.BRAINTREE_MERCHANT_ID,
-#     public_key=settings.BRAINTREE_PUBLIC_KEY,
-#     private_key=settings.BRAINTREE_PRIVATE_KEY
-# )
+LOGGER = logging.getLogger(__name__)
+CARDCONNECT_URL = settings.CARDCONNECT_URL
+MERCHANT_ID = settings.CARDCONNECT_MERCHANT_ID
+USERNAME = settings.CARDCONNECT_USERNAME
+PASSWORD = settings.CARDCONNECT_PASSWORD
+AUTH_TOKEN = base64.b64encode(f'{USERNAME}:{PASSWORD}'.encode()).decode()
 
 
 def redirect_to_official(request):
@@ -72,8 +74,6 @@ def payment_confirmation_view(request):
     next_page = 'campaigns/sales_thankyou.html'
 
     order = Order.objects.get(pk=request.POST['order_id'])
-    # token = request.POST['token']
-    payment_amount = request.POST.get('payment-amount', 0)
     first_name = request.POST['first-name']
     last_name = request.POST['last-name']
     phone_number = request.POST['phone-number']
@@ -81,6 +81,12 @@ def payment_confirmation_view(request):
     postal_code = request.POST['postal-code']
     email = request.POST['email']
     campaign_lookup = request.POST['campaign']
+
+    expiration_date = request.POST.get('expiration-date')
+    payment_amount = request.POST.get('payment-amount', 0)
+    token = request.POST.get('token')
+    cvv = request.POST.get('cvv')
+
     campaign = Campaign.objects.get(lookup_name=campaign_lookup)
     substitutions = {
         'campaign': campaign.lookup_name
@@ -98,43 +104,41 @@ def payment_confirmation_view(request):
 
     if not order.get_total() or order.deferred:
         next_page = 'campaigns/free_thankyou.html'
-    # else:
-        # nonce = request.POST['payment-method-nonce']
-        # transaction_sale_body = {
-        #     "amount": payment_amount,
-        #     "customer": {
-        #         "first_name": first_name,
-        #         "last_name": last_name,
-        #         "phone": phone_number,
-        #         "email": email
-        #     },
-        #     "billing": {
-        #         "first_name": first_name,
-        #         "last_name": last_name,
-        #         "street_address": street_address,
-        #         "postal_code": postal_code,
-        #     },
-        #     # "payment_method_nonce": nonce,
-        #     "options": {
-        #         "submit_for_settlement": True
-        #     }
-        # }
-        # if campaign.merchant_account_id:
-        #     transaction_sale_body['merchant_account_id'] = campaign.merchant_account_id.label
+    else:
+        transaction_sale_body = {
+            "merchid": MERCHANT_ID,
+            "amount": payment_amount,
+            "expiry": expiration_date,
+            "account": token,
+            "name": f"{first_name} {last_name}",
+            "address": street_address,
+            "postal": postal_code,
+            "email": email,
+            "orderid": str(order.id),
+            "taxexempt": "Y",
+            "cvv2": cvv,
+            "capture": "Y"
+        }
 
-        # result = braintree.Transaction.sale(transaction_sale_body)
-        # if not result.is_success:
-        #     substitutions = {
-        #         'header': 'Checkout',
-        #         'order': order,
-        #         # 'nonce': braintree.ClientToken.generate(),
-        #         'error_message': result.message
-        #     }
-        #     return render(request, 'campaigns/checkout.html', substitutions)
+        result = requests.post(
+            f'{CARDCONNECT_URL}/auth',
+            json=transaction_sale_body,
+            headers={
+                'Authorization': f'Basic {AUTH_TOKEN}'
+            }
+        )
+        if not result.ok:
+            substitutions = {
+                'header': 'Checkout',
+                'order': order,
+                # 'nonce': braintree.ClientToken.generate(),
+                'error_message': 'There was an issue processing the order'
+            }
+            return render(request, 'campaigns/checkout.html', substitutions)
 
-        # substitutions['result'] = result
-        # order.braintree_id = result.transaction.id
-        # order.save()
+        substitutions['result'] = result.json()
+        order.braintree_id = result.json()['retref']
+        order.save()
 
     order_list = list(order.lineitem_set.filter(quantity__gt=0).values_list('product__name', 'quantity'))
     email_body = [
@@ -159,7 +163,10 @@ def payment_confirmation_view(request):
             set(email_addrs),
     )
     msg.attach_alternative('<br>'.join(email_body), "text/html")
-    msg.send()
+    try:
+        msg.send()
+    except ImproperlyConfigured:
+        LOGGER.error('ERROR: Sendgrid not configured')
     return render(request, next_page, substitutions)
 
 
@@ -220,8 +227,7 @@ def checkout_view(request):
 
 def campaign_specific_checkout(campaign, request, order):
     product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
-    campaign_lookup_name = 'golf'
-    if campaign == campaign_lookup_name:
+    if campaign == 'golf':
         player_product = Product.objects.get(campaign__lookup_name=campaign, name='Player')
         players = int(product_inputs.get('product-{}'.format(player_product.pk)))
         sponsorship = product_inputs.get('product-sponsorship')
