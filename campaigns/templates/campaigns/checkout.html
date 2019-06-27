@@ -60,7 +60,7 @@
             </div>
             <div class='col-md-12'>
                 <label class='col-md-6' for="card-number">Card Number</label>
-                <iframe id="tokenFrame" class='col-md-6' height=36 name="tokenFrame" frameborder="0" scrolling="no"/></iframe>
+                <iframe id="tokenFrame" class='col-md-6' height=48 style="padding:0" name="tokenFrame" frameborder="0" scrolling="no"/></iframe>
             </div>
             <div id="cardNumberValidationError" class="error"></div>
             <div class='col-md-12'>
@@ -121,7 +121,7 @@
          var tokenError = '';
 
         function loadIframe() {
-            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com:6443/itoke/ajax-tokenizer.html?css=.error{color:red;border-color:red;};input{margin:0;}&invalidinputevent=true";
+            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com:6443/itoke/ajax-tokenizer.html?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
         }
 
         function validateForm() {
