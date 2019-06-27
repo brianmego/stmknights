@@ -149,15 +149,12 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-# Braintree Payment API
-BRAINTREE_ENVIRONMENT = os.environ.get('BRAINTREE_ENVIRONMENT', 'sandbox').lower()
-BRAINTREE_MERCHANT_ID = os.environ.get('BRAINTREE_MERCHANT_ID')
-BRAINTREE_PUBLIC_KEY = os.environ.get('BRAINTREE_PUBLIC_KEY')
-BRAINTREE_PRIVATE_KEY = os.environ.get('BRAINTREE_PRIVATE_KEY')
 
+#Cardconnect variables
 CARDCONNECT_URL = os.environ.get('CARDCONNECT_API_URL')
 CARDCONNECT_USERNAME = os.environ.get('CARDCONNECT_USERNAME')
 CARDCONNECT_PASSWORD = os.environ.get('CARDCONNECT_PASSWORD')
+CARDCONNECT_MERCHANT_ID = os.environ.get('CARDCONNECT_MERCHANT_ID')
 
 # Sendgrid Email
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
