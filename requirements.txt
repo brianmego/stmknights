@@ -1,4 +1,4 @@
-Django==1.11.21
+Django==1.11.22
 mysqlclient==1.3.14
 braintree==3.30.0
 sendgrid-django==3.0.0
