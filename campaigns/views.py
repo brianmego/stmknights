@@ -8,7 +8,8 @@ import requests
 import logging
 
 LOGGER = logging.getLogger(__name__)
-CARDCONNECT_URL = settings.CARDCONNECT_URL
+CARDCONNECT_API_URL = settings.CARDCONNECT_API_URL
+CARDCONNECT_TOKEN_URL = settings.CARDCONNECT_TOKEN_URL
 MERCHANT_ID = settings.CARDCONNECT_MERCHANT_ID
 USERNAME = settings.CARDCONNECT_USERNAME
 PASSWORD = settings.CARDCONNECT_PASSWORD
@@ -121,7 +122,7 @@ def payment_confirmation_view(request):
         }
 
         result = requests.post(
-            f'{CARDCONNECT_URL}/auth',
+            f'{CARDCONNECT_API_URL}/auth',
             json=transaction_sale_body,
             headers={
                 'Authorization': f'Basic {AUTH_TOKEN}'
@@ -132,7 +133,8 @@ def payment_confirmation_view(request):
                 'header': 'Checkout',
                 'order': order,
                 # 'nonce': braintree.ClientToken.generate(),
-                'error_message': 'There was an issue processing the order'
+                'error_message': 'There was an issue processing the order',
+                'token_url': CARDCONNECT_TOKEN_URL
             }
             return render(request, 'campaigns/checkout.html', substitutions)
 

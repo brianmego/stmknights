@@ -121,7 +121,7 @@
          var tokenError = '';
 
         function loadIframe() {
-            document.getElementById("tokenFrame").src = "https://fts.cardconnect.com:6443/itoke/ajax-tokenizer.html?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
+            document.getElementById("tokenFrame").src = "{{ token_url }}?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
         }
 
         function validateForm() {
