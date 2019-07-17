@@ -134,7 +134,6 @@ def payment_confirmation_view(request):
                 'order': order,
                 # 'nonce': braintree.ClientToken.generate(),
                 'error_message': 'There was an issue processing the order',
-                'token_url': CARDCONNECT_TOKEN_URL
             }
             return render(request, 'campaigns/checkout.html', substitutions)
 
@@ -216,6 +215,7 @@ def checkout_view(request):
             'header': 'Checkout',
             'order': order,
             'campaign': campaign,
+            'token_url': CARDCONNECT_TOKEN_URL
         }
 
         deferred_payment = request.POST.get('deferred')
