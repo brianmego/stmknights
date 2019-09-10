@@ -151,7 +151,7 @@ STATICFILES_DIRS = (
 
 
 #Cardconnect variables
-CARDCONNECT_BASE_URL = os.environ.get('CARDCONNECT_BASE_URL')
+CARDCONNECT_BASE_URL = os.environ.get('CARDCONNECT_BASE_URL').rstrip('/')
 CARDCONNECT_API_URL = f'{CARDCONNECT_BASE_URL}/cardconnect/rest'
 CARDCONNECT_TOKEN_URL = f'{CARDCONNECT_BASE_URL}/itoke/ajax-tokenizer.html'
 CARDCONNECT_USERNAME = os.environ.get('CARDCONNECT_USERNAME')

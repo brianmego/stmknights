@@ -64,8 +64,8 @@
             </div>
             <div id="cardNumberValidationError" class="error"></div>
             <div class='col-md-12'>
-                <label class='col-md-6' for="expiration-date">Expiration Date (MMYY)</label>
-                <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=4></input>
+                <label class='col-md-6' for="expiration-date">Expiration Date (MM/YYYY)</label>
+                <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=6></input>
                 <div id="expDateValidationError" class="error"></div>
             </div>
             <div class='col-md-12'>
@@ -118,7 +118,9 @@
     {% if order.get_total %}
 
     <script language='JavaScript'>
-         var tokenError = '';
+        $('input[name="expiration-date"]').mask('00/0000');
+
+        var tokenError = '';
 
         function loadIframe() {
             document.getElementById("tokenFrame").src = "{{ token_url }}?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
@@ -135,20 +137,21 @@
                 valid = false;
             }
 
-            if (document.getElementById('expDateInput').value === '') {
+            var expDate = document.getElementById('expiration-date').value;
+            var dateRe = new RegExp('[0-9]{2}/[0-9]{4}');
+
+            if (expDate === '') {
                 document.getElementById("expDateValidationError").innerHTML = "* Expiration date is required";
+                valid = false;
+            } else if (!dateRe.test(expDate)) {
+                document.getElementById("expDateValidationError").innerHTML = "* Expiration date must be in the format MM/YYYY";
                 valid = false;
             }
 
-            if (document.getElementById('cvvInput').value === '') {
+            if (document.getElementById('cvv').value === '') {
                 document.getElementById("cvvValidationError").innerHTML = "* CVV is required";
                 valid = false;
             }
-
-            if (valid) {
-                alert("Token value: " + document.getElementById('token').value);
-            }
-            return false;
         }
 
         window.addEventListener('message', function(event) {
