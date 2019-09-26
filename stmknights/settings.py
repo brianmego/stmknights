@@ -149,6 +149,35 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+LOG_PATH = os.environ.get('STMKNIGHTS_LOG_PATH')
+LOG_LEVEL = os.environ.get('STMKNIGHTS_LOG_LEVEL', 'DEBUG')
+
+if LOG_PATH:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        "formatters": {
+            "simple": {
+                "format": "%(asctime)s.%(msecs)03d %(name)-15s %(levelname)-8s %(message)s",
+                "datefmt": "%Y-%m-%dT%H:%M:%S"
+            },
+        },
+        'handlers': {
+            'file': {
+                'level': LOG_LEVEL,
+                'formatter': 'simple',
+                'class': 'logging.FileHandler',
+                'filename': LOG_PATH,
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': LOG_LEVEL,
+                'propagate': True,
+            },
+        },
+    }
 
 #Cardconnect variables
 CARDCONNECT_BASE_URL = os.environ.get('CARDCONNECT_BASE_URL').rstrip('/')
@@ -161,4 +190,3 @@ CARDCONNECT_MERCHANT_ID = os.environ.get('CARDCONNECT_MERCHANT_ID')
 # Sendgrid Email
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-
