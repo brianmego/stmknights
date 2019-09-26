@@ -97,7 +97,7 @@
                                 </div>
                             </div>
                             <div class="form-bottom">
-                                <form method="POST" action="/checkout/" class="sales-form">
+                                <form method="POST" action="/checkout/" class="sales-form" autocomplete="off">
                                     {% csrf_token %}
 
                                     {% for i in '1234' %}
