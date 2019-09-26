@@ -84,7 +84,8 @@ def payment_confirmation_view(request):
     campaign_lookup = request.POST['campaign']
 
     expiration_date = request.POST.get('expiration-date')
-    expiration_date = ''.join(x for x in expiration_date if x.isdigit())
+    if expiration_date:
+        expiration_date = ''.join(x for x in expiration_date if x.isdigit())
     payment_amount = request.POST.get('payment-amount', 0)
     token = request.POST.get('token')
     cvv = request.POST.get('cvv')
