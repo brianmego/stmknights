@@ -206,7 +206,7 @@ def checkout_view(request):
         for name, value in campaign_tags.items():
             pk = name.split('tag-')[1]
             tag = CampaignTag.objects.get(pk=pk)
-            extra.append('{}:{}'.format(tag.key, value))
+            extra.append('{}: {}'.format(tag.key, value))
         if extra:
             order.extra = '<br>'.join(extra)
             order.save()
