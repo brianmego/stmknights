@@ -96,15 +96,17 @@ def payment_confirmation_view(request):
         'campaign': campaign.lookup_name
     }
 
-    Customer.objects.create(
-        first_name=first_name,
-        last_name=last_name,
-        phone_number=phone_number,
-        email=email,
-        street_address=street_address,
-        postal_code=postal_code,
-        order=order
-    )
+    existing = Customer.objects.filter(order=order)
+    if not existing:
+        Customer.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            email=email,
+            street_address=street_address,
+            postal_code=postal_code,
+            order=order
+        )
 
     if not order.get_total() or order.deferred:
         next_page = 'campaigns/free_thankyou.html'
