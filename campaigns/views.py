@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import never_cache
 from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
 import requests
 import logging
@@ -173,6 +174,7 @@ def payment_confirmation_view(request):
     return render(request, next_page, substitutions)
 
 
+@never_cache
 def checkout_view(request):
     if request.method == 'POST':
         product_inputs = {x[0]: x[1] for x in request.POST.items() if x[0].startswith('product-')}
