@@ -157,6 +157,7 @@
                 document.getElementById("cvvValidationError").innerHTML = "* CVV is required";
                 valid = false;
             }
+            return valid;
         }
 
         window.addEventListener('message', function(event) {
