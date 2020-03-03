@@ -35,7 +35,7 @@ def generic_order(request, campaign, pk=None):
         return render(request, 'campaigns/campaign_closed.html', substitutions)
 
 
-    products = Product.objects.filter(campaign=campaign_obj)
+    products = Product.objects.filter(campaign=campaign_obj, enabled=True)
 
     cart = {}
     for product in products:
