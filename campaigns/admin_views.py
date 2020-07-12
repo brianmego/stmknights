@@ -51,7 +51,7 @@ DETAIL_SQL = """
       AND ord.voided = 0
       AND ord.created_time >= campaign.reporting_start
       AND lineitem.quantity > 0
-    ORDER BY cust.last_name
+    ORDER BY ord.created_time DESC
 """
 
 def get_filtered_order_list(campaign):
