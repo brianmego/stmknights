@@ -13,7 +13,8 @@ build: .build.ts
 	@touch $@
 
 distclean:
-	rm -rf $(VENV_NAME)
+	rm -vrf $(VENV_NAME)
+	rm -v .*.ts
 
 clean_pyc:
 	find . -name "*.pyc" -delete
