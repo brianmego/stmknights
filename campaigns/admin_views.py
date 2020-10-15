@@ -109,7 +109,7 @@ def detail_report(request):
 
     formatted_rows = []
     show_deferred = show_detailed_deferred(row_list)
-    show_extra = show_detailed_deferred(row_list)
+    show_extra = show_detailed_extra(row_list)
     header_row = get_detail_header_row(
         row_list,
         deferred=show_deferred,
