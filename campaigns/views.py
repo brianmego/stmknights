@@ -66,7 +66,8 @@ def generic_order(request, campaign, pk=None):
         'where': campaign_obj.where,
         'when': campaign_obj.when,
         'details': campaign_obj.details,
-        'tags': campaign_obj.campaigntag_set.all()
+        'tags': campaign_obj.campaigntag_set.all(),
+        'testmode': campaign_obj.test_mode
     }
     template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
     return render(request, template_name, substitutions)

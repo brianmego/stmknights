@@ -55,6 +55,7 @@ class Campaign(models.Model):
     closed_message = models.TextField(null=True, blank=True)
     details = models.TextField(null=True, blank=True)
     contact = models.ManyToManyField(Contact)
+    test_mode = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -69,6 +69,10 @@ for campaign in campaign_list:
         view=admin_views.detail_report,
         name='{} Detail Report'.format(campaign.name))
     admin.site.register_view(
+        '{}_detailByLastName'.format(campaign.lookup_name),
+        view=admin_views.detail_report_by_name,
+        name='{} Detail Report By Last Name'.format(campaign.name))
+    admin.site.register_view(
         '{}_customer'.format(campaign.lookup_name),
         view=admin_views.customer_report,
         name='{} Customer Report'.format(campaign.name))

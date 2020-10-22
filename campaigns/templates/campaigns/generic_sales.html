@@ -68,9 +68,15 @@
                 <div class="col-md-6">
                     <p id="total">$0</p>
                 </div>
+                {% if testmode %}
+                    <div class"row">
+                        <span>This campaign is in test mode. When live the option to Submit will appear</span>
+                    </div>
+                {% else %}
                 <div class="row">
                     <button type="submit" class="save btn btn-default center">Submit</button>
                 </div>
+                {% endif %}
             </div>
             <div class="row">
                 {% for tag in tags %}

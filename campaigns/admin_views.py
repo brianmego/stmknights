@@ -54,6 +54,28 @@ DETAIL_SQL = """
     ORDER BY ord.created_time DESC
 """
 
+DETAIL_SQL_BY_NAME = """
+    SELECT cust.first_name,
+           cust.last_name,
+           ord.created_time,
+           cust.email,
+           product.name,
+           lineitem.quantity,
+           ord.deferred,
+           ord.extra
+    FROM campaigns_product product
+           JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
+           JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
+           JOIN campaigns_order ord on lineitem.order_id = ord.id
+           JOIN campaigns_customer cust on ord.id = cust.order_id
+    WHERE campaign.lookup_name = %s
+      and (ord.braintree_id is not NULL or deferred = 1)
+      AND ord.voided = 0
+      AND ord.created_time >= campaign.reporting_start
+      AND lineitem.quantity > 0
+    ORDER BY cust.last_name
+"""
+
 def get_filtered_order_list(campaign):
     order_list = Order.objects.all()
     if sum([x.cost for x in campaign.product_set.all()]) > 0:
@@ -101,10 +123,13 @@ def show_detailed_extra(row_list):
         return True
     return False
 
-def detail_report(request):
+def detail_report_by_name(request):
+    return detail_report(request, sql=DETAIL_SQL_BY_NAME)
+
+def detail_report(request, sql=DETAIL_SQL):
     requested_campaign = request.path.split('/')[-1].rsplit('_', 1)[0]
     with connection.cursor() as cursor:
-        cursor.execute(DETAIL_SQL, [requested_campaign])
+        cursor.execute(sql, [requested_campaign])
         row_list = cursor.fetchall()
 
     formatted_rows = []
