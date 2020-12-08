@@ -31,7 +31,7 @@ dump_prod_db:
 	--indent 2 > db.json
 
 load_data:
-	rm db.sqlite3
+	rm -fv db.sqlite3
 	source ./set_env_local.sh && \
 	./manage.py migrate && \
 	./manage.py loaddata db.json

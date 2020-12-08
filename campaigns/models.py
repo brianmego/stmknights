@@ -56,6 +56,7 @@ class Campaign(models.Model):
     details = models.TextField(null=True, blank=True)
     contact = models.ManyToManyField(Contact)
     test_mode = models.BooleanField(default=False)
+    columns = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.name

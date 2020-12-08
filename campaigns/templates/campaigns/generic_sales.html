@@ -29,13 +29,13 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4">
-                    <h3><strong>Product</strong></h3>
+                    <h3><strong>{{ column_headers.0 }}</strong></h3>
                 </div>
                 <div class="col-md-3">
-                    <h3><strong>Add to Cart</strong></h3>
+                    <h3><strong>{{ column_headers.1 }}</strong></h3>
                 </div>
                 <div class="col-md-1">
-                    <h3><strong>Cost</strong></h3>
+                    <h3><strong>{{ column_headers.2 }}</strong></h3>
                 </div>
             </div>
             <br>

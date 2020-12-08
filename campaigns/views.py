@@ -1,4 +1,5 @@
 import base64
+import shlex
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
@@ -58,6 +59,8 @@ def generic_order(request, campaign, pk=None):
     if not header:
         header = '{} Order Form'.format(campaign_obj.name)
 
+    column_headers = campaign_obj.columns or "'Product' 'Add To Cart' 'Cost'"
+    column_headers = shlex.split(column_headers)
     substitutions = {
         'order': pk,
         'campaign': campaign_obj.lookup_name,
@@ -67,7 +70,8 @@ def generic_order(request, campaign, pk=None):
         'when': campaign_obj.when,
         'details': campaign_obj.details,
         'tags': campaign_obj.campaigntag_set.all(),
-        'testmode': campaign_obj.test_mode
+        'testmode': campaign_obj.test_mode,
+        'column_headers': column_headers
     }
     template_name = 'campaigns/{}.html'.format(campaign_obj.template_name)
     return render(request, template_name, substitutions)
