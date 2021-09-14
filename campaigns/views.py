@@ -140,6 +140,7 @@ def payment_confirmation_view(request):
             }
         )
         if not result.ok:
+            LOGGER.error('ERROR from CardConnect. Code: %s; Text:', result.status_code, result.text)
             substitutions = {
                 'header': 'Checkout',
                 'order': order,
