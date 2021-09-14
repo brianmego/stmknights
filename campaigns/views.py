@@ -179,6 +179,8 @@ def payment_confirmation_view(request):
         msg.send()
     except ImproperlyConfigured:
         LOGGER.error('ERROR: Sendgrid not configured')
+    except Exception:
+        LOGGER.error(f'Something went wrong with Sendgrid. Not sending confirmation email for order {request.POST["order_id"]}')
     return render(request, next_page, substitutions)
 
 
