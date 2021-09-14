@@ -64,20 +64,20 @@
                 <input type='text' class='col-md-6' id="email" name="email" required />
             </div>
             <div class='col-md-12'>
-                <label class='col-md-6' for="card-number">Card Number</label>
-                <iframe id="tokenFrame" class='col-md-6' height=48 style="padding:0" name="tokenFrame" frameborder="0" scrolling="no"/></iframe>
+                <label class='col-md-6' for="card-number">Card Card Info</label>
+                <iframe id="tokenFrame" name="tokenFrame" src="{{token_url}}" class='col-md-6' style="padding:0" frameborder="0" scrolling="no"/></iframe>
             </div>
             <div id="cardNumberValidationError" class="error"></div>
-            <div class='col-md-12'>
-                <label class='col-md-6' for="expiration-date">Expiration Date (MM/YYYY)</label>
-                <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=6></input>
-                <div id="expDateValidationError" class="error"></div>
-            </div>
-            <div class='col-md-12'>
-                <label class='col-md-6' for="cvv">CVV</label>
-                <input class="col-md-6" type='text' name="cvv" id="cvv" maxLength=4></input>
-                <div id="cvvValidationError" class="error"></div>
-            </div>
+            <!-- <div class='col-md-12'> -->
+            <!--     <label class='col-md-6' for="expiration-date">Expiration Date (MM/YYYY)</label> -->
+            <!--     <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=6></input> -->
+            <!--     <div id="expDateValidationError" class="error"></div> -->
+            <!-- </div> -->
+            <!-- <div class='col-md-12'> -->
+            <!--     <label class='col-md-6' for="cvv">CVV</label> -->
+            <!--     <input class="col-md-6" type='text' name="cvv" id="cvv" maxLength=4></input> -->
+            <!--     <div id="cvvValidationError" class="error"></div> -->
+            <!-- </div> -->
 
             <input type="hidden" name="payment-amount" value="{{ order.get_total }}">
             <input type="submit" id='submit' value="Pay ${{ order.get_total }}" disabled>
@@ -127,9 +127,9 @@
 
         var tokenError = '';
 
-        function loadIframe() {
-            document.getElementById("tokenFrame").src = "{{ token_url }}?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
-        }
+//        function loadIframe() {
+//            document.getElementById("tokenFrame").src = "{{ token_url }}?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
+//        }
 
         function validateForm() {
             var valid = true;
@@ -164,7 +164,7 @@
         }
 
         window.addEventListener('message', function(event) {
-            //console.log("received message: " + event.data);
+            console.log("received message: " + event.data);
             var token = JSON.parse(event.data);
             if (token.validationError === undefined) {
                 document.getElementById("cardNumberValidationError").innerHTML = '';
@@ -177,7 +177,7 @@
             document.getElementById('token').value = token.message;
         }, false);
 
-        loadIframe();
+//        loadIframe();
     </script>
 
     {% endif %}

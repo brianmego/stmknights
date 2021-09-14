@@ -8,6 +8,7 @@ from django.views.decorators.cache import never_cache
 from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
 import requests
 import logging
+import urllib
 
 LOGGER = logging.getLogger(__name__)
 CARDCONNECT_API_URL = settings.CARDCONNECT_API_URL
