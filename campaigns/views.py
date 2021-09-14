@@ -139,8 +139,11 @@ def payment_confirmation_view(request):
                 'Authorization': f'Basic {AUTH_TOKEN}'
             }
         )
-        if not result.ok:
-            LOGGER.error('ERROR from CardConnect. Code: %s; Text:', result.status_code, result.text)
+        success = result.ok
+        if success:
+            success = (result.json().get('respstat') == 'A')
+        if not success:
+            LOGGER.error('ERROR from CardConnect. Code: %s; Text: %s', result.status_code, result.text)
             substitutions = {
                 'header': 'Checkout',
                 'order': order,
