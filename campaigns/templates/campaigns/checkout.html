@@ -23,6 +23,7 @@
                     </div>
                 {% endif %}
             {% endfor %}
+
             <div class="row">
                 <div class="col-md-3">
                     <strong>
@@ -68,16 +69,6 @@
                 <iframe id="tokenFrame" name="tokenFrame" src="{{token_url}}" class='col-md-6' style="padding:0" frameborder="0" scrolling="no"/></iframe>
             </div>
             <div id="cardNumberValidationError" class="error"></div>
-            <!-- <div class='col-md-12'> -->
-            <!--     <label class='col-md-6' for="expiration-date">Expiration Date (MM/YYYY)</label> -->
-            <!--     <input class="col-md-6" type='text' name="expiration-date" id="expiration-date" maxLength=6></input> -->
-            <!--     <div id="expDateValidationError" class="error"></div> -->
-            <!-- </div> -->
-            <!-- <div class='col-md-12'> -->
-            <!--     <label class='col-md-6' for="cvv">CVV</label> -->
-            <!--     <input class="col-md-6" type='text' name="cvv" id="cvv" maxLength=4></input> -->
-            <!--     <div id="cvvValidationError" class="error"></div> -->
-            <!-- </div> -->
 
             <input type="hidden" name="payment-amount" value="{{ order.get_total }}">
             <input type="submit" id='submit' value="Pay ${{ order.get_total }}" disabled>
@@ -108,8 +99,9 @@
                 <input type='text' class='col-md-6' id="email" name="email" required />
             </div>
 
-            <input type="submit" id='submit' value="Submit">
+            <input type="submit" id='submit' value="Submit" />
             {% endif %}
+            <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
             <input type='hidden' name="campaign" value="{{ campaign }}" />
             <input type='hidden' name="token" id="token" />
         </div>
@@ -126,10 +118,6 @@
         $('input[name="expiration-date"]').mask('00/0000');
 
         var tokenError = '';
-
-//        function loadIframe() {
-//            document.getElementById("tokenFrame").src = "{{ token_url }}?css=input{padding-left:15px;padding-right:15px;width:460px;line-height:30px}&invalidinputevent=true";
-//        }
 
         function validateForm() {
             var valid = true;
@@ -177,7 +165,6 @@
             document.getElementById('token').value = token.message;
         }, false);
 
-//        loadIframe();
     </script>
 
     {% endif %}

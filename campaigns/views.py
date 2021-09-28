@@ -13,6 +13,8 @@ import urllib
 LOGGER = logging.getLogger(__name__)
 CARDCONNECT_API_URL = settings.CARDCONNECT_API_URL
 CARDCONNECT_TOKEN_URL = settings.CARDCONNECT_TOKEN_URL
+RECAPTCHA_SITE_KEY = settings.RECAPTCHA_SITE_KEY
+RECAPTCHA_SECRET_KEY = settings.RECAPTCHA_SECRET_KEY
 MERCHANT_ID = settings.CARDCONNECT_MERCHANT_ID
 USERNAME = settings.CARDCONNECT_USERNAME
 PASSWORD = settings.CARDCONNECT_PASSWORD
@@ -78,6 +80,20 @@ def generic_order(request, campaign, pk=None):
     return render(request, template_name, substitutions)
 
 
+def verify_recaptcha(response_token: str):
+    response = requests.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        data={
+            'secret': RECAPTCHA_SECRET_KEY,
+            'response': response_token
+        }
+    ).json()
+    if response['success'] is False:
+        LOGGER.error('Failed recaptcha: %s', response)
+        return False
+    return True
+
+
 def payment_confirmation_view(request):
     next_page = 'campaigns/sales_thankyou.html'
 
@@ -89,6 +105,18 @@ def payment_confirmation_view(request):
     postal_code = request.POST['postal-code']
     email = request.POST['email']
     campaign_lookup = request.POST['campaign']
+    recaptcha_response = request.POST['g-recaptcha-response']
+
+    valid = verify_recaptcha(recaptcha_response)
+    if not valid:
+        substitutions = {
+            'header': 'Checkout',
+            'order': order,
+            'error_message': 'There was an issue processing the order',
+            'recaptcha_site_key': RECAPTCHA_SITE_KEY
+        }
+        return render(request, 'campaigns/checkout.html', substitutions)
+
 
     expiration_date = request.POST.get('expiration-date')
     if expiration_date:
@@ -149,6 +177,7 @@ def payment_confirmation_view(request):
                 'order': order,
                 # 'nonce': braintree.ClientToken.generate(),
                 'error_message': 'There was an issue processing the order',
+                'recaptcha_site_key': RECAPTCHA_SITE_KEY
             }
             return render(request, 'campaigns/checkout.html', substitutions)
 
@@ -233,7 +262,8 @@ def checkout_view(request):
             'header': 'Checkout',
             'order': order,
             'campaign': campaign,
-            'token_url': CARDCONNECT_TOKEN_URL
+            'token_url': CARDCONNECT_TOKEN_URL,
+            'recaptcha_site_key': RECAPTCHA_SITE_KEY,
         }
 
         deferred_payment = request.POST.get('deferred')

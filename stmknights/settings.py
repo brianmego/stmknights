@@ -190,3 +190,7 @@ CARDCONNECT_MERCHANT_ID = os.environ.get('CARDCONNECT_MERCHANT_ID')
 # Sendgrid Email
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+
+# Recaptcha
+RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
