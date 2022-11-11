@@ -19,9 +19,8 @@
                     <div class="col-sm-8 col-sm-offset-2 text">
                         <div class="description">
                             <p>
-                            Sixth annual fundraiser for the benefit of
+                            Annual fundraiser for the benefit of
                             <a href="https://www.stmaustin.org/mobile-loaves-fish" target="_blank"><strong>Mobile Loaves and Fishes</strong></a>
-                            held at the <a href="http://twincreeksclub.com" target="_blank"><strong>Twin Creeks Country Club</strong></a>
                             </p>
                         </div>
                     </div>
@@ -39,8 +38,33 @@
                             <strong>Registration: </strong>10:30 AM
                         </p>
                         <p>
-                            <strong>Start: </strong>12:30 PM
+                            <strong>Lunch: </strong>11:00 AM - 12:30 PM
                         </p>
+                        <p>
+                            <strong>Shotgun Start: </strong>12:30 PM
+                        </p>
+                        <p>
+                            <strong>Dinner: </strong>5:00 PM
+                        </p>
+                        <p>
+                            <strong>Raffle Winners and Prizes: </strong>6:00 PM
+                        </p>
+                        <div class="left">
+                            <p>
+                            <strong>Prizes for: </strong>
+                            <ul type="disc">
+                                <li>
+                                    <span>Closest to the hole</span>
+                                </li>
+                                <li>
+                                    <span>Longest Drive</span>
+                                </li>
+                                <li>
+                                    <span>Silent Auction Winners</span>
+                                </li>
+                            </ul>
+                            </p>
+                        </div>
                         <br>
                         <div class="left">
                             <p>
@@ -56,11 +80,8 @@
                                     {% endif %}
                                     {% endfor %}
                                     <li>Up to four members on a team</li>
-                                    <li>Lunch included prior to tournament start</li>
                                     <li>Practice facilities and range balls will be provided</li>
                                     <li>Soft drinks and on-course beverages will be provided</li>
-                                    <li>Dinner following the event</li>
-                                    <li>Hole-In-One prizes on all four par 3 holes!</li>
                                 </ul>
                             </p>
                             <br>
@@ -69,12 +90,12 @@
                                 <ul type='disc'>
                                     {% for product in products %}
                                     {% if product.meta_field_one == "sponsor-level" %}
-                                    <li>{{ product.name }} - 
+                                    <li>{{ product.name }} -
                                         <span id="product-{{ product.id }}-cost">
                                             ${{ product.cost|floatformat }}
-                                        </span> - 
+                                        </span> -
                                         {{ product.meta_field_two }}</li>
-                                        <span class='hidden' id="product-{{ product.id }}-name">{{ product.name }}</span> 
+                                        <span class='hidden' id="product-{{ product.id }}-name">{{ product.name }}</span>
                                     {% endif %}
                                     {% endfor %}
                                 </ul>

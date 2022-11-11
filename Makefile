@@ -8,7 +8,8 @@ all: build
 build: .build.ts
 
 .build.ts:
-	python3.7 -m venv $(VENV_NAME)
+	python3.10 -m venv $(VENV_NAME)
+	$(VENV_NAME)/bin/pip install wheel
 	$(VENV_NAME)/bin/pip install -r requirements.txt
 	@touch $@
 
