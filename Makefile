@@ -7,6 +7,9 @@ all: build
 
 build: .build.ts
 
+install_linux_deps:
+	sudo apt install python3.10-dev python3.10-venv gcc libmysqlclient-dev
+
 .build.ts:
 	python3.10 -m venv $(VENV_NAME)
 	$(VENV_NAME)/bin/pip install wheel
