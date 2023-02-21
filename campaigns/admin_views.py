@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.db import connection
-import datetime
-from .models import Campaign, Order
+from .models import Order
 
 AGGREGATE_SQL = """
     SELECT product.name,
@@ -40,7 +39,8 @@ DETAIL_SQL = """
            product.name,
            lineitem.quantity,
            ord.deferred,
-           ord.extra
+           ord.extra,
+           ord.id
     FROM campaigns_product product
            JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
            JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
@@ -62,7 +62,8 @@ DETAIL_SQL_BY_NAME = """
            product.name,
            lineitem.quantity,
            ord.deferred,
-           ord.extra
+           ord.extra,
+           ord.id
     FROM campaigns_product product
            JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
            JOIN campaigns_lineitem lineitem on product.id = lineitem.product_id
@@ -104,9 +105,8 @@ def aggregate_report(request):
     return render(request, 'campaigns/report.html', substitutions)
 
 
-def get_detail_header_row(row_list, deferred=False, extra=False):
-    header_row = ['Name', 'Date', 'Email', 'Order']
-    formatted_rows = []
+def get_detail_header_row(deferred=False, extra=False):
+    header_row = ['Name', 'Date', 'Email', 'Order', 'Id']
     if deferred:
         header_row.append('Deferred')
     if extra:
@@ -136,7 +136,6 @@ def detail_report(request, sql=DETAIL_SQL):
     show_deferred = show_detailed_deferred(row_list)
     show_extra = show_detailed_extra(row_list)
     header_row = get_detail_header_row(
-        row_list,
         deferred=show_deferred,
         extra=show_extra
     )
@@ -147,6 +146,7 @@ def detail_report(request, sql=DETAIL_SQL):
             row[2].strftime('%m/%d/%y'),  # Date
             row[3],  # Email
             f'{row[4]} - {row[5]}',  # Order
+            row[8],  # Order ID
         ]
         if show_deferred:
             output_row.append(row[6])

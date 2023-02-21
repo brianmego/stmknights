@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 import datetime
 from django.db import migrations, models
-from campaigns.models import Campaign
 import django.db.models.deletion
 import django.utils.timezone
 import uuid

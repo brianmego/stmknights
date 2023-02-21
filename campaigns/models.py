@@ -157,3 +157,7 @@ class Customer(models.Model):
             self.last_name,
             self.order.modified_time
         )
+
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'

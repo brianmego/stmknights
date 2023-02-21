@@ -1,9 +1,9 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.redirect_to_official, name='redirect'),
-    url(r'^checkout/$', views.checkout_view, name='checkout'),
-    url(r'^payment_confirmation/$', views.payment_confirmation_view, name='payment_confirmation'),
-    url(r'^(?P<campaign>[\w+]+)(?:/order)?/(?P<pk>[\w+-]+)?$', views.generic_order, name='order'),
+    path(r'', views.redirect_to_official, name='redirect'),
+    path(r'checkout/', views.checkout_view, name='checkout'),
+    path(r'payment_confirmation/', views.payment_confirmation_view, name='payment_confirmation'),
+    re_path(r'(?P<campaign>[\w+]+)(?:/order)?/(?P<pk>[\w+-]+)?', views.generic_order, name='order'),
 ]
