@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.contrib.admin.sites import gettext_lazy
 import datetime
 
-from .. import models
+from ..models import LineItem
 
 class LineItemInline(admin.TabularInline):
-    model = models.LineItem
+    model = LineItem
     readonly_fields = ['product', 'price_snapshot', 'quantity']
     can_delete = False
 

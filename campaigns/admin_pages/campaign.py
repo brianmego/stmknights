@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .. import models
+from ..models.campaign_tag import CampaignTag
 
 class CampaignTagInline(admin.TabularInline):
-    model = models.CampaignTag
+    model = CampaignTag
 
 class CampaignAdmin(admin.ModelAdmin):
     inlines = [

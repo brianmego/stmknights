@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ..models import Attendee
+from ..models.attendee import Attendee
 
 
 class AttendeeInline(admin.TabularInline):
