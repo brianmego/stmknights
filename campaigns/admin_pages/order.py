@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin.sites import gettext_lazy
 import datetime
 
-from ..models import LineItem
+from ..models import Campaign, LineItem
 
 class LineItemInline(admin.TabularInline):
     model = LineItem
@@ -44,34 +44,42 @@ class UnclaimedFilter(admin.SimpleListFilter):
             case _:
                 return queryset
 
-class AfterStartDate(admin.SimpleListFilter):
-    title = gettext_lazy('After Start Date')
-    parameter_name = 'after_start_date'
+class IsActiveCampaignFilter(admin.SimpleListFilter):
+    title = gettext_lazy('Campaign Status')
+    parameter_name = 'campaign_active'
+
+    def choices(self, changelist):
+        choices = super().choices(changelist)
+        next(choices)
+        return choices
 
     def lookups(self, request, model_admin):
         return (
-            ('AfterStartDate', gettext_lazy('After Start Date')),
+            ('Active', gettext_lazy('Active')),
+            ('All', gettext_lazy('All'))
         )
 
     def queryset(self, request, queryset):
         match self.value():
-            case "AfterStartDate":
-                return queryset.filter(modified_time__gte=datetime.date.today())
-            case _:
+            case "Active":
+                return queryset.filter(campaign__closed=False)
+            case "All":
                 return queryset
+            case None:
+                return queryset.filter(campaign__closed=False)
 
 class CampaignFilter(admin.SimpleListFilter):
     title = gettext_lazy('Campaign')
     parameter_name = 'campaign'
 
     def lookups(self, request, model_admin):
-        campaigns = [(x.name, gettext_lazy(x.name)) for x in models.Campaign.objects.all()]
-        return campaigns
+        campaigns = model_admin.get_queryset(request).filter(campaign__closed=False).order_by().values_list('campaign__name', flat=True).distinct()
+        return [(x, gettext_lazy(x)) for x in campaigns]
         
 
     def queryset(self, request, queryset):
         match self.value():
-            case "All":
+            case None:
                 return queryset
             case _:
                 return queryset.filter(campaign__name=self.value())
@@ -85,8 +93,8 @@ def unclaim(modeladmin, request, queryset):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['customer', 'modified_time', 'total', 'braintree_id', 'claimed', 'voided', 'deferred']
-    list_filter = (HasTotalFilter, UnclaimedFilter, AfterStartDate)
+    list_display = ['campaign', 'customer', 'created_time', 'detail', 'total', 'claimed']
+    list_filter = (IsActiveCampaignFilter, HasTotalFilter, UnclaimedFilter, CampaignFilter)
     inlines = [
         LineItemInline
     ]
@@ -99,3 +107,6 @@ class OrderAdmin(admin.ModelAdmin):
         if obj.customer_set.exists():
             return obj.customer_set.first().full_name
         return None
+
+    def detail(self, obj):
+        return obj.get_detail()

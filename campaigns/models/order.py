@@ -10,6 +10,11 @@ class Order(models.Model):
     voided = models.BooleanField(default=False)
     claimed = models.BooleanField(default=False)
     extra = models.TextField(null=True, blank=True)
+    campaign = models.ForeignKey(
+        'Campaign',
+        on_delete=models.CASCADE,
+        null=True
+    )
 
     def get_total(self):
         return sum([x.price_snapshot * x.quantity for x in self.lineitem_set.all()])
@@ -22,6 +27,11 @@ class Order(models.Model):
             campaign,
             self.id
         )
+
+    def get_detail(self):
+        if self.lineitem_set.exists():
+            return [x for x in self.lineitem_set.all() if x.quantity != 0]
+        return None
 
     class Meta:
         ordering = ['-modified_time']
@@ -40,8 +50,7 @@ class LineItem(models.Model):
     quantity = models.PositiveIntegerField()
 
     def __str__(self):
-        return '{} - {} - {}'.format(
+        return '{} - {}'.format(
             self.product.name,
             self.quantity,
-            self.order.modified_time
         )
