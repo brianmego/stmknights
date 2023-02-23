@@ -99,6 +99,8 @@ class OrderAdmin(admin.ModelAdmin):
         LineItemInline
     ]
     actions = [claim, unclaim]
+    list_per_page = 10
+    search_fields = ('customer__first_name', 'customer__last_name')
 
     def total(self, obj):
         return obj.get_total()

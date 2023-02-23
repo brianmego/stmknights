@@ -46,16 +46,17 @@ INSTALLED_APPS = [
     'campaigns',
 ]
 
-try:
+if DEBUG:
     import django_extensions
-    INSTALLED_APPS.append(
-        'django_extensions'
+    INSTALLED_APPS.extend(
+        [
+            'django_extensions',
+            'debug_toolbar'
+        ]
     )
-except ImportError:
-    # Not local dev
-    pass
 
 
+INTERNAL_IPS = ["127.0.0.1", "localhost"]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -65,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if DEBUG:
+    MIDDLEWARE = MIDDLEWARE[:3] + ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE[3:]
 
 ROOT_URLCONF = 'stmknights.urls'
 
