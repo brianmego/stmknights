@@ -106,7 +106,8 @@ else:
             'NAME': os.environ['DB_NAME'],
             'USER': os.environ['DB_USER'],
             'PASSWORD': os.environ['DB_PASSWORD'],
-            'ATOMIC_REQUESTS': True
+            'ATOMIC_REQUESTS': True,
+            'OPTIONS': {'ssl_mode': 'DISABLED'},
         }
     }
 
