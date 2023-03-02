@@ -102,6 +102,11 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 10
     search_fields = ('customer__first_name', 'customer__last_name')
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate()
+        return queryset
+
     def total(self, obj):
         return obj.get_total()
 

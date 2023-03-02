@@ -228,7 +228,8 @@ def checkout_view(request):
             order = Order.objects.get(pk=existing_order_id)
             order.lineitem_set.all().delete()
         else:
-            order = Order.objects.create()
+            campaign_obj = Campaign.objects.get(lookup_name=campaign)
+            order = Order.objects.create(campaign=campaign_obj)
 
         for name, value in product_inputs.items():
             if not value:
