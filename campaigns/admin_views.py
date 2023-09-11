@@ -100,7 +100,7 @@ def aggregate_report(request):
         formatted_rows.append([row[0], row[1], row[2]])
     substitutions = {
         'header_row': header_row,
-        'row_list': formatted_rows, 
+        'row_list': formatted_rows,
     }
     return render(request, 'campaigns/report.html', substitutions)
 
@@ -173,7 +173,7 @@ def customer_report(request):
     for row in row_list:
         formatted_rows.append([f'{row[1]}, {row[0]}', row[2], row[3]])
     substitutions = {
-        'row_list': formatted_rows, 
-        'header_row': header_row, 
+        'row_list': formatted_rows,
+        'header_row': header_row,
     }
     return render(request, 'campaigns/report.html', substitutions)
