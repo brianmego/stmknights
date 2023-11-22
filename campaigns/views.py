@@ -2,13 +2,13 @@ import base64
 import shlex
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import never_cache
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from .models import Campaign, CampaignTag, Customer, LineItem, Order, Product
 import requests
 import logging
-import urllib
 
 LOGGER = logging.getLogger(__name__)
 CARDCONNECT_API_URL = settings.CARDCONNECT_API_URL
@@ -200,20 +200,21 @@ def payment_confirmation_view(request):
 
     email_addrs = list(campaign.contact.all().values_list('email', flat=True))
     email_addrs.append(request.POST['email'])
-
-    msg = EmailMultiAlternatives(
-            'STM Knights Website Order Confirmation',
-            ''.join(email_body),
-            'noreply@STMKnights.org',
-            set(email_addrs),
+    msg = Mail(
+        from_email='admin@stmknights.org',
+        to_emails=list(set(email_addrs)),
+        subject='STM Knights Website Order Confirmation',
+        plain_text_content=''.join(email_body),
+        html_content='<br>'.join(email_body),
     )
-    msg.attach_alternative('<br>'.join(email_body), "text/html")
+    sg = SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
     try:
-        msg.send()
+        sg.send(msg)
     except ImproperlyConfigured:
         LOGGER.error('ERROR: Sendgrid not configured')
-    except Exception:
+    except Exception as e:
         LOGGER.error(f'Something went wrong with Sendgrid. Not sending confirmation email for order {request.POST["order_id"]}')
+        LOGGER.error(str(e))
     return render(request, next_page, substitutions)
 
 
