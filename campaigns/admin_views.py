@@ -64,6 +64,7 @@ DETAIL_SQL_BY_NAME = """
            lineitem.quantity,
            ord.deferred,
            ord.extra,
+           (lineitem.price_snapshot * lineitem.quantity) as amount,
            ord.id
     FROM campaigns_product product
            JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
