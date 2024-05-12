@@ -40,6 +40,7 @@ DETAIL_SQL = """
            lineitem.quantity,
            ord.deferred,
            ord.extra,
+           (lineitem.price_snapshot * lineitem.quantity) as amount,
            ord.id
     FROM campaigns_product product
            JOIN campaigns_campaign campaign on product.campaign_id = campaign.id
@@ -106,7 +107,7 @@ def aggregate_report(request):
 
 
 def get_detail_header_row(deferred=False, extra=False):
-    header_row = ['Name', 'Date', 'Email', 'Order', 'Id']
+    header_row = ['Name', 'Date', 'Email', 'Order', 'Amount', 'Id']
     if deferred:
         header_row.append('Deferred')
     if extra:
@@ -146,7 +147,8 @@ def detail_report(request, sql=DETAIL_SQL):
             row[2].strftime('%m/%d/%y'),  # Date
             row[3],  # Email
             f'{row[4]} - {row[5]}',  # Order
-            row[8],  # Order ID
+            f'${row[8]:.2f}',  # Amount
+            row[9],  # Order ID
         ]
         if show_deferred:
             output_row.append(row[6])
