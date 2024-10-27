@@ -1,5 +1,4 @@
 Django==3.2.18
-mysqlclient==2.1.1
 braintree==3.59.1
 sendgrid==6.10.0
 django-adminplus==0.5

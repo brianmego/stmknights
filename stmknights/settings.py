@@ -94,25 +94,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-if not os.environ.get('DB_HOST'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(
+            os.environ.get("DB_PATH", BASE_DIR), 'db.sqlite3'
+        ),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.{}'.format(os.environ['DB_TYPE']),
-            'HOST': os.environ['DB_HOST'],
-            'NAME': os.environ['DB_NAME'],
-            'USER': os.environ['DB_USER'],
-            'PASSWORD': os.environ['DB_PASSWORD'],
-            'ATOMIC_REQUESTS': True,
-            'OPTIONS': {'ssl_mode': 'DISABLED'},
-        }
-    }
+}
 
 
 # Internationalization
