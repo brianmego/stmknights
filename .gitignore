@@ -11,3 +11,4 @@ set_env_local_secret.sh
 todo.txt
 .idea
 .*.ts
+backup

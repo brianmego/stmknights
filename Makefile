@@ -24,15 +24,8 @@ clean_pyc:
 	find . -name "*.pyc" -delete
 
 dump_prod_db:
-	source ./set_env_prod.sh && \
-	./manage.py dumpdata \
-	--exclude auth.permission \
-	--exclude contenttypes \
-	--exclude auth.user \
-	--exclude sessions.session \
-	--exclude adminplus \
-	--exclude admin.logentry \
-	--indent 2 > db.json
+	mkdir -p backup
+	scp stmknights:/mnt/database/db.sqlite3 backup/db.sqlite3
 
 load_data:
 	rm -fv db.sqlite3
@@ -40,7 +33,7 @@ load_data:
 	./manage.py migrate && \
 	./manage.py loaddata db.json
 
-rebuild_db_from_prod: dump_prod_db load_data
+# rebuild_db_from_prod: dump_prod_db load_data
 
 run: build
 	source ./set_env_local.sh && source ./set_env_local_secret.sh && \
