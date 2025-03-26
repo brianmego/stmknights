@@ -8,10 +8,10 @@ all: build
 build: .build.ts
 
 install_linux_deps:
-	sudo apt install python3.10-dev python3.10-venv gcc
+	sudo apt install python3.12-dev python3.12-venv gcc
 
 .build.ts:
-	python3.11 -m venv $(VENV_NAME)
+	python3.12 -m venv $(VENV_NAME)
 	$(VENV_NAME)/bin/pip install wheel
 	$(VENV_NAME)/bin/pip install -r requirements.txt
 	@touch $@
