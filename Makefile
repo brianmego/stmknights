@@ -25,7 +25,7 @@ clean_pyc:
 
 dump_prod_db:
 	mkdir -p backup
-	scp stmknights:/mnt/database/db.sqlite3 backup/db.sqlite3
+	scp stmknights:/mnt/db/db.sqlite3 backup/db.sqlite3
 
 load_data:
 	rm -fv db.sqlite3
