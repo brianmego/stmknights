@@ -1,4 +1,4 @@
-Django==4.2.27
+Django==5.2.9
 braintree==3.59.1
 sendgrid==6.10.0
 django-adminplus==0.6
