@@ -17,6 +17,8 @@ from django.urls import include, path
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from stmknights import settings
+from django.contrib.auth.forms import AuthenticationForm
+AuthenticationForm.base_fields['password'].widget.attrs = {}
 
 admin.site = AdminSitePlus()
 admin.sites.site = admin.site
