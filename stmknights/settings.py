@@ -56,6 +56,8 @@ if DEBUG:
     )
 
 
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_HTTPONLY=True
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
