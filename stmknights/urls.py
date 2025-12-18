@@ -18,7 +18,7 @@ from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from stmknights import settings
 from django.contrib.auth.forms import AuthenticationForm
-AuthenticationForm.base_fields['password'].widget.attrs = {}
+AuthenticationForm.base_fields['password'].widget.attrs = {"autocomplete": "off"}
 
 admin.site = AdminSitePlus()
 admin.sites.site = admin.site
