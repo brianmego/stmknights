@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.db.utils import OperationalError
 
-from . import admin_views, models
+from . import models
+from .reports import views
 from .admin_pages.order import OrderAdmin
 from .admin_pages.campaign import CampaignAdmin
 from .admin_pages.degree import DegreeRegistrationAdmin
 from .admin_pages.product import ProductAdmin
 
-admin.site.site_header = 'STM Knights Admin Page'
-admin.site.site_title = 'STM Knights Admin Page'
+admin.site.site_header = "STM Knights Admin Page"
+admin.site.site_title = "STM Knights Admin Page"
 admin.site.enable_nav_sidebar = False
 
 admin.site.register(models.DegreeRegistration, DegreeRegistrationAdmin)
@@ -28,19 +29,26 @@ except OperationalError:
 
 for campaign in campaign_list:
     admin.site.register_view(
-        '{}_aggregate'.format(campaign.lookup_name),
-        view=admin_views.aggregate_report,
-        name='{} Aggregrate Report'.format(campaign.name)
+        "{}_aggregate".format(campaign.lookup_name),
+        view=views.generic_report_as_html,
+        urlname="aggregate",
+        name="{} Aggregrate Report".format(campaign.name),
     )
     admin.site.register_view(
-        '{}_detail'.format(campaign.lookup_name),
-        view=admin_views.detail_report,
-        name='{} Detail Report'.format(campaign.name))
+        "{}_detail".format(campaign.lookup_name),
+        view=views.generic_report_as_html,
+        urlname="detail",
+        name="{} Detail Report".format(campaign.name),
+    )
     admin.site.register_view(
-        '{}_detailByLastName'.format(campaign.lookup_name),
-        view=admin_views.detail_report_by_name,
-        name='{} Detail Report By Last Name'.format(campaign.name))
+        "{}_detailByLastName".format(campaign.lookup_name),
+        view=views.generic_report_as_html,
+        urlname="detail_by_name",
+        name="{} Detail Report By Last Name".format(campaign.name),
+    )
     admin.site.register_view(
-        '{}_customer'.format(campaign.lookup_name),
-        view=admin_views.customer_report,
-        name='{} Customer Report'.format(campaign.name))
+        "{}_customer".format(campaign.lookup_name),
+        view=views.generic_report_as_html,
+        urlname="customer",
+        name="{} Customer Report".format(campaign.name),
+    )

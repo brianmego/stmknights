@@ -25,6 +25,7 @@ admin.sites.site = admin.site
 admin.autodiscover()
 
 urlpatterns = [
+    path(r'admin/reports', include('campaigns.reports.urls')),
     path(r'admin/', admin.site.urls),
     path(r'', include('campaigns.urls')),
 ]
